@@ -3,7 +3,7 @@ const REDIRECT_URI = chrome.identity.getRedirectURL(); // ex: https://<ext>.chro
 
 export async function signinWithLinkedin(): Promise<string | null> {
     const STATE = crypto.randomUUID(); // génère par tentative
-    const scope = 'openid profile email'; // besoin du produit OIDC activé
+    const scope = 'r_liteprofile'; // besoin du produit OIDC activé
     const authUrl =
         'https://www.linkedin.com/oauth/v2/authorization' +
         `?response_type=code` +

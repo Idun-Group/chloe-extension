@@ -14,12 +14,10 @@ import Joi from 'joi';
             envFilePath: '.env',
             validationSchema: Joi.object({
                 PORT: Joi.number().default(3000),
-                FIREBASE_CLIENT_EMAIL: Joi.string().required(),
-                FIREBASE_PRIVATE_KEY: Joi.string().required(),
-                FIREBASE_PROJECT_ID: Joi.string().required(),
                 LINKEDIN_CLIENT_ID: Joi.string().required(),
                 LINKEDIN_CLIENT_SECRET: Joi.string().required(),
                 LINKEDIN_REDIRECT_URI: Joi.string().required(),
+                DATABASE_URL: Joi.string().required(),
             }),
         }),
     ],

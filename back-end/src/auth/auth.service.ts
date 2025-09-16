@@ -1,16 +1,17 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { firstValueFrom } from 'rxjs';
 
 @Injectable()
 export class AuthService {
-    private readonly clientId = process.env.LINKEDIN_CLIENT_ID!;
-    private readonly clientSecret = process.env.LINKEDIN_CLIENT_SECRET!;
-    private readonly redirectUri = process.env.LINKEDIN_REDIRECT_URI!;
-    private readonly tokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken';
-    private readonly userInfoUrl = 'https://www.linkedin.com/oauth/v2/userinfo';
+    constructor(
+        private readonly httpService: HttpService,
+        private configService: ConfigService,
+    ) {}
 
-    constructor(private readonly httpService: HttpService) {}
+    private readonly tokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken';
+    private readonly userInfoUrl = 'https://api.linkedin.com/v2/userinfo';
 
     async getAccessTokenFromCode(code: string) {
         const response = await firstValueFrom(
@@ -18,9 +19,14 @@ export class AuthService {
                 params: {
                     grant_type: 'authorization_code',
                     code,
-                    redirect_uri: this.redirectUri,
-                    client_id: this.clientId,
-                    client_secret: this.clientSecret,
+                    redirect_uri: this.configService.get<string>(
+                        'LINKEDIN_REDIRECT_URI',
+                    ),
+                    client_id:
+                        this.configService.get<string>('LINKEDIN_CLIENT_ID'),
+                    client_secret: this.configService.get<string>(
+                        'LINKEDIN_CLIENT_SECRET',
+                    ),
                 },
             }),
         ).catch((e) => {

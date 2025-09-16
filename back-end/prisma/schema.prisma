@@ -15,21 +15,32 @@ datasource db {
 }
 
 model User {
-  id    String    @id   @map("_id")  @db.ObjectId
-  email String  @unique
-  linkedinId  String?
-  fullName  String
-  imageUrl  String
-  createAt  DateTime  @default(now())
-  updateAt  DateTime  @default(now())
-  aiContext AIContext[]
+  id         String      @id @map("_id") @db.ObjectId
+  email      String      @unique
+  linkedinId String?
+  fullName   String
+  imageUrl   String
+  createAt   DateTime    @default(now())
+  updateAt   DateTime    @default(now())
+  aiContext  AIContext[]
 }
 
 model AIContext {
-  id  String    @id     @default(uuid())  @map("_id")   @db.ObjectId
-  title String
+  id      String  @id @default(uuid()) @map("_id") @db.ObjectId
+  title   String
   content String
   default Boolean
-  ownerId   String  @db.ObjectId
-  owner  User @relation(fields: [ownerId], references: [id])
+  ownerId String  @db.ObjectId
+  owner   User    @relation(fields: [ownerId], references: [id])
+}
+
+model Right {
+  id   String @id @map("_id") @db.ObjectId
+  role Role
+}
+
+enum Role {
+  FREE
+  PLUS
+  PREMIUM
 }

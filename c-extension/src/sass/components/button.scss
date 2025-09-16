@@ -1,0 +1,55 @@
+@import '../abstract/variables.scss';
+
+#chloe-extension {
+    button {
+        background-color: $primary-color;
+        color: $black;
+        border: 1px solid $black;
+        padding: 4px 12px;
+        border-radius: 14px;
+        cursor: pointer;
+        margin: 0 16px;
+        font-size: 12px;
+    }
+}
+
+.info-button {
+    cursor: help;
+    font-size: 18px !important;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid $black;
+    color: $black;
+    flex-shrink: 0;
+    object-fit: cover;
+}
+
+.info-container {
+    display: flex;
+
+    align-items: center;
+    font-weight: normal !important;
+}
+
+.go-to-btn {
+    background-color: transparent !important;
+    margin: 0;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: none;
+    border: none !important;
+    cursor: pointer;
+    font-size: 14px;
+    color: #4c5efd;
+
+    img {
+        width: 20px;
+        height: 20px;
+        object-fit: cover;
+    }
+}

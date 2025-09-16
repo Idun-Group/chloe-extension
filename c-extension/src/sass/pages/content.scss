@@ -1,0 +1,324 @@
+@import '../abstract/variables.scss';
+
+.chloe-extension {
+    background-color: white;
+    position: fixed;
+    width: 450px;
+    height: 80vh;
+    bottom: 64px;
+    right: 64px;
+    z-index: 999;
+    box-shadow: 2px 4px 10px black;
+
+    border-radius: 10px;
+
+    display: flex; // NEW
+    flex-direction: column; // NEW
+    box-sizing: border-box; // NEW
+    overflow: hidden; // au lieu de overflow-y: hidden
+
+    * {
+        box-sizing: border-box;
+    }
+
+    &__header {
+        background-color: $white-smoke;
+        color: $black;
+        padding: 16px 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 3px solid #cecece;
+        flex: 0 0 auto; // NEW: taille intrinsèque du header
+
+        &__title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            &__logo {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+        }
+
+        &__btn--user {
+            background: none !important;
+            border: none !important;
+            cursor: pointer;
+
+            &__icon {
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                object-fit: cover;
+            }
+        }
+    }
+
+    &__body {
+        height: 100%;
+        padding: 10px 20px;
+        overflow-y: auto;
+        flex: 1 1 auto; // NEW: prend l'espace restant
+        min-height: 0; // NEW: indispensable pour que overflow marche en flex
+        padding: 10px 20px;
+        overflow: auto; // scroll à l'intérieur du body
+
+        &__nav {
+            display: flex;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid #bebebe;
+            margin-bottom: 12px;
+            border-radius: 16px;
+            &__button {
+                background-color: transparent;
+                color: $black;
+                width: 100%;
+                text-align: center;
+                border: none;
+                padding: 10px 15px;
+                border-radius: 8px;
+                cursor: pointer;
+                font-weight: bold;
+
+                font-size: 18px;
+
+                &.selected {
+                    background-color: $black;
+                    color: white;
+                }
+            }
+        }
+
+        &__profile {
+            &__introduce {
+                margin: 12px 0;
+                &__full-name {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    font-weight: bold;
+                }
+            }
+
+            &__contact {
+                margin: 12px 0;
+            }
+
+            &__activities {
+                margin: 12px 0;
+                .info-container {
+                    margin-bottom: 4px;
+                }
+                &__title {
+                    font-weight: bold;
+                    margin-bottom: 5px;
+                    display: flex;
+                    gap: 10px;
+                }
+
+                &__item {
+                    width: 100%;
+                    margin-bottom: 8px;
+                    padding: 14px 8px;
+                    border: 1px solid #4c5efd;
+                    border-radius: 16px;
+                    position: relative;
+
+                    &__description {
+                        display: -webkit-box;
+                        line-clamp: 3;
+                        -webkit-box-orient: vertical;
+                        -webkit-line-clamp: 3;
+                        overflow: hidden;
+                        text-overflow: ellipsis;
+                        width: 100%;
+                        min-width: 0;
+                        color: #555;
+                    }
+                }
+
+                &__more {
+                    color: #8e8e8e;
+                    margin-bottom: 8px;
+                    font-style: italic;
+
+                    text-align: end;
+
+                    a {
+                        font-style: normal;
+                        color: #8e8e8e !important;
+                        text-decoration: underline;
+                        margin-left: 5px;
+                    }
+                }
+            }
+
+            &__outreach {
+                margin: 12px 0;
+                box-sizing: border-box;
+                width: 85%;
+                align-items: center;
+                min-height: 48px;
+                gap: 8px;
+
+                .info-button {
+                    margin-left: 8px;
+                }
+
+                &__prepare-button {
+                    display: flex;
+                    justify-content: baseline;
+                    flex: 2;
+                    align-items: center;
+                    background-color: $primary-color !important;
+                    color: $black;
+                    border: 1px solid $black;
+                    padding: 4px 12px;
+                    margin: 8px 0 !important;
+                    border-radius: 14px;
+                    cursor: pointer;
+                    &__icon {
+                        width: 32px;
+                        height: 32px;
+                        object-fit: cover;
+                        vertical-align: middle;
+                        display: inline-block;
+                    }
+                }
+            }
+
+            &__members {
+                a {
+                    color: #8e8e8e !important;
+                    text-decoration: underline;
+                    margin-left: 5px;
+                    text-align: end;
+                    font-size: 14px;
+                }
+                &__list {
+                    display: flex;
+                    flex-direction: column;
+
+                    &__item {
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        justify-content: space-between;
+
+                        &__left {
+                            display: flex;
+                            align-items: center;
+                            gap: 8px;
+                            &__icon {
+                                width: 26px;
+                                height: 26px;
+                                object-fit: cover;
+                            }
+
+                            &__name {
+                                margin-bottom: 0 !important;
+                            }
+                        }
+
+                        .go-to-btn-member {
+                            background-color: transparent !important;
+                            margin: 0;
+                            background: none;
+                            border: none !important;
+                            cursor: pointer;
+                            font-size: 14px;
+                            color: #4c5efd;
+
+                            img {
+                                width: 26px;
+                                height: 26px;
+                                object-fit: cover;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        &__personal-info {
+            margin: 8px;
+            .info-container {
+                border: 1px solid #bebebe;
+            }
+        }
+        .add-button {
+            background-color: $black !important;
+            color: white !important;
+            padding: 4px 12px;
+            border-radius: 14px;
+            cursor: pointer;
+        }
+
+        .action-btn {
+            background: none !important;
+            border: none !important;
+            margin: 0 !important;
+            cursor: pointer;
+            img {
+                margin: 0 !important;
+            }
+        }
+
+        &__my-lists {
+            margin: 8px;
+            &__header {
+                display: flex;
+                align-items: center;
+
+                h3 {
+                    margin-bottom: 0 !important;
+                }
+            }
+
+            &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+
+                &__item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+            }
+        }
+        &__my-contexts {
+            margin: 8px;
+            &__header {
+                display: flex;
+                align-items: center;
+
+                h3 {
+                    margin-bottom: 0 !important;
+                }
+            }
+
+            &__container {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+
+                &__item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    &__action {
+                        display: flex;
+                        gap: 8px;
+                    }
+                }
+            }
+        }
+    }
+}

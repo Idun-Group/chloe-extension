@@ -1,0 +1,25 @@
+{
+    "name": "chloe-addon",
+    "version": "1.0.0",
+    "description": "",
+    "license": "ISC",
+    "author": "",
+    "type": "commonjs",
+    "main": "app.js",
+    "scripts": {
+        "build": "webpack --config ./webpack.config.js",
+        "build:watch": "webpack --config ./webpack.config.js --watch",
+        "sass": "sass src/sass/main.scss:public/styles/styles.css --no-source-map --style=compressed --watch",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "devDependencies": {
+        "@types/chrome": "^0.1.6",
+        "clean-webpack-plugin": "^4.0.0",
+        "copy-webpack-plugin": "^13.0.1",
+        "sass": "^1.92.0",
+        "ts-loader": "^9.5.4",
+        "typescript": "^5.9.2",
+        "webpack": "^5.101.3",
+        "webpack-cli": "^6.0.1"
+    }
+}

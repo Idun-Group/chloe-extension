@@ -1,0 +1,49 @@
+{
+    "manifest_version": 3,
+    "name": "Chloe Extension",
+    "version": "1.0.0",
+    "description": "A basic template for a Chrome extension using TypeScript.",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "identity",
+        "webNavigation",
+        "tabs"
+    ],
+    "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAwp2iiywjc/sg5VNbwRxQfTOkO1aCYYioXId1c3tiVVp9uYtm1uoEFsfx9zCFHG5xDEXIIq5w8LbqdBywlz1oPb8E7XtFen0kPaioIsOsmeGJ+DPfWz3O0R0V44w0k3dDrunsqvkrrPIC9RTe1uRPPlmNTmFfxKXihyVRurJO+xYZ0shKpEGdaYKpgkf2X9khMQZPQuoSnwRE/t3Knx/aL4YKQjdXQ95ePgKqOxDXDs27a7zxrv+uPd9Xxn+8KQJi3QIRMSEYTkuf59ztxLLb9tD1exPTf4VBVWLxzR5hMcXU2RsC754xtf2V2H7CTndAklK/ALBA8xkZULjFaukF1QIDAQAB",
+    "background": {
+        "service_worker": "background.js"
+    },
+    "content_security_policy": {
+        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://www.linkedin.com https://api.linkedin.com http://localhost:3000 http://127.0.0.1:3000 https://localhost:3000 ws://localhost:3000"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://*.linkedin.com/*"],
+            "js": ["content.js"],
+            "run_at": "document_end",
+            "css": ["public/styles/styles.css"],
+            "all_frames": false
+        }
+    ],
+    "host_permissions": [
+        "https://www.linkedin.com/*",
+        "https://api.linkedin.com/*",
+        "http://localhost:3000/*"
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": ["public/assets/*"],
+            "matches": ["<all_urls>"]
+        }
+    ],
+    "action": {
+        "default_popup": "public/popup.html",
+        "default_icon": {
+            "16": "public/favicon-16x16.png",
+            "32": "public/favicon-32x32.png"
+        }
+    },
+    "options_page": "public/options.html"
+}

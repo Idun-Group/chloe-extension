@@ -1,9 +1,9 @@
 const CLIENT_ID = '787vqxyis93jh6';
 const REDIRECT_URI = chrome.identity.getRedirectURL(); // ex: https://<ext>.chromiumapp.org/
 
-export async function signinWithLinkedin(): Promise<string | null> {
+export async function signinWithLinkedin() {
     const STATE = crypto.randomUUID(); // génère par tentative
-    const scope = 'r_liteprofile'; // besoin du produit OIDC activé
+    const scope = 'openid profile email'; // besoin du produit OIDC activé
     const authUrl =
         'https://www.linkedin.com/oauth/v2/authorization' +
         `?response_type=code` +
@@ -19,6 +19,8 @@ export async function signinWithLinkedin(): Promise<string | null> {
 
     if (!redirectUrl) return null;
 
+    console.log('Redirect URL:', redirectUrl);
+
     const params = new URLSearchParams(new URL(redirectUrl).search);
     const code = params.get('code');
     const returnedState = params.get('state');
@@ -26,7 +28,7 @@ export async function signinWithLinkedin(): Promise<string | null> {
     if (!code) throw new Error('No code in callback');
     if (returnedState !== STATE) throw new Error('State mismatch');
 
-    const res = await fetch('http://localhost:3000/auth/linkedin/token', {
+    const res = await fetch('http://localhost:3000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),

@@ -15,9 +15,10 @@ datasource db {
 }
 
 model User {
-  id         String      @id @map("_id") @db.ObjectId
+  id         String   @default(auto())   @id @map("_id") @db.ObjectId
+  linkedinId  String  @unique
   email      String      @unique
-  linkedinId String?
+  linkedinToken String?
   fullName   String
   imageUrl   String
   createAt   DateTime    @default(now())
@@ -26,7 +27,7 @@ model User {
 }
 
 model AIContext {
-  id      String  @id @default(uuid()) @map("_id") @db.ObjectId
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
   title   String
   content String
   default Boolean
@@ -35,7 +36,7 @@ model AIContext {
 }
 
 model Right {
-  id   String @id @map("_id") @db.ObjectId
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
   role Role
 }
 

@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { UserService } from './user/user.service';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
+import { UserModule } from './user/user.module';
 import Joi from 'joi';
 
 @Module({
@@ -21,9 +22,13 @@ import Joi from 'joi';
                 LINKEDIN_CLIENT_SECRET: Joi.string().required(),
                 LINKEDIN_REDIRECT_URI: Joi.string().required(),
                 DATABASE_URL: Joi.string().required(),
+                JWT_SECRET: Joi.string().default('super-secret'),
+                JWT_ACCESS_EXPIRATION: Joi.string().default('15m'),
+                JWT_REFRESH_EXPIRATION: Joi.string().default('30d'),
             }),
         }),
         PrismaModule,
+        UserModule,
     ],
     controllers: [AppController, AuthController],
     providers: [AppService, UserService, PrismaService],

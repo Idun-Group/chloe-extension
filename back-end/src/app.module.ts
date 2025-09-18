@@ -12,6 +12,8 @@ import { AicontextController } from './aicontext/aicontext.controller';
 import { AicontextService } from './aicontext/aicontext.service';
 import { AicontextModule } from './aicontext/aicontext.module';
 import Joi from 'joi';
+import { ProfileListController } from './profile-list/profile-list.controller';
+import { ProfileListService } from './profile-list/profile-list.service';
 
 @Module({
     imports: [
@@ -34,7 +36,18 @@ import Joi from 'joi';
         UserModule,
         AicontextModule,
     ],
-    controllers: [AppController, AuthController, AicontextController],
-    providers: [AppService, UserService, PrismaService, AicontextService],
+    controllers: [
+        AppController,
+        AuthController,
+        AicontextController,
+        ProfileListController,
+    ],
+    providers: [
+        AppService,
+        UserService,
+        PrismaService,
+        AicontextService,
+        ProfileListService,
+    ],
 })
 export class AppModule {}

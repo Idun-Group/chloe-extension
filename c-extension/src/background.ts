@@ -12,6 +12,13 @@ import {
     getAIContextById,
     updateAIContext,
 } from './background/ai-context';
+import {
+    createProfileList,
+    deleteProfileList,
+    fetchProfileLists,
+    getProfileListById,
+    updateProfileList,
+} from './background/profil-list';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -96,6 +103,35 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'DELETE_AICONTEXT') {
             const { id } = request.data;
             const result = await deleteAIContext(id);
+            sendResponse(result);
+        }
+
+        if (request.action === 'CREATE_PROFILE_LIST') {
+            const { type, name, description } = request.data;
+            const result = await createProfileList(type, name, description);
+            sendResponse(result);
+        }
+
+        if (request.action === 'GET_PROFILE_LISTS') {
+            const result = await fetchProfileLists();
+            sendResponse(result);
+        }
+
+        if (request.action === 'GET_PROFILELIST_BY_ID') {
+            const { id } = request.data;
+            const result = await getProfileListById(id);
+            sendResponse(result);
+        }
+
+        if (request.action === 'EDIT_PROFILE_LIST') {
+            const { id, name, description, type } = request.data;
+            const result = await updateProfileList(id, name, description, type);
+            sendResponse(result);
+        }
+
+        if (request.action === 'DELETE_PROFILE_LIST') {
+            const { id } = request.data;
+            const result = await deleteProfileList(id);
             sendResponse(result);
         }
     })();

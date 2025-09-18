@@ -47,18 +47,20 @@ export function displayCreateListModal() {
                     <label for="list-name" class="create-list__label">Nom de la liste :</label>
                     <input type="text" id="list-name" name="list-name" class="create-list__input" required />
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="entreprise" name="entreprise" class="create-list__checkbox" />
-                    <label for="entreprise" class="create-list__label create-list__label--checkbox">Entreprise & école</label>
+
+                <div class="create-list__field-group">
+                    <label for="list-description" class="create-list__label">Description :</label>
+                    <textarea id="list-description" name="list-description" class="create-list__textarea" resize rows="4"></textarea>
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="user" name="user" class="create-list__checkbox" />
-                    <label for="user" class="create-list__label create-list__label--checkbox">Utilisateur</label>
+
+                <div class="create-list__field-group">
+                    <label for="list-type" class="create-list__label">Type de liste :</label>
+                    <select id="list-type" name="list-type" class="create-list__select">
+                        <option value="PEOPLE">Personnes</option>
+                        <option value="ORGANIZATION">Entreprises</option>
+                    </select>
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="is-private" name="is-private" class="create-list__checkbox" />
-                    <label for="is-private" class="create-list__label create-list__label--checkbox">Privée</label>
-                </div>
+
                 <button type="submit" class="create-list__submit-button submit-button">Créer ma liste</button>
             </form>
         `;
@@ -71,20 +73,46 @@ export function displayCreateListModal() {
                 'list-name',
             ) as HTMLInputElement;
             const listName = listNameInput.value;
-            const isEntreprise = (
-                document.getElementById('entreprise') as HTMLInputElement
-            ).checked;
-            const isUser = (document.getElementById('user') as HTMLInputElement)
-                .checked;
-            const isPrivate = (
-                document.getElementById('is-private') as HTMLInputElement
-            ).checked;
+
+            const listDescriptionInput = document.getElementById(
+                'list-description',
+            ) as HTMLTextAreaElement;
+
+            const listTypeSelect = document.getElementById(
+                'list-type',
+            ) as HTMLSelectElement;
             console.log('Creating list:', {
                 listName,
-                isEntreprise,
-                isUser,
-                isPrivate,
+                listDescription: listDescriptionInput.value,
+                listType: listTypeSelect.value,
             });
+
+            chrome.runtime.sendMessage(
+                {
+                    action: 'CREATE_PROFILE_LIST',
+                    data: {
+                        name: listName,
+                        description: listDescriptionInput.value,
+                        type: listTypeSelect.value,
+                    },
+                },
+                (response) => {
+                    if (response.success) {
+                        console.log(
+                            'List created successfully:',
+                            response.data,
+                        );
+
+                        displaySettingsPage(
+                            document.getElementById(
+                                'chloe-extension-body',
+                            ) as HTMLElement,
+                        );
+                    } else {
+                        console.error('Error creating list:', response.error);
+                    }
+                },
+            );
         });
     }
 }

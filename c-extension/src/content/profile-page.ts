@@ -330,7 +330,7 @@ const displayCompanyPage = async (container: HTMLElement) => {
 const scrapeLinkedinUserProfile = async () => {
     const getText = (sel: string) =>
         document.querySelector(sel)?.textContent?.trim() || '';
-    const fullName = getText('.artdeco h1') || 'Prénom Nom';
+    const fullName = getText('.artdeco-card h1') || 'Prénom Nom';
     const location =
         getText('.text-body-small.inline.t-black--light.break-words') ||
         'Ville, Pays';

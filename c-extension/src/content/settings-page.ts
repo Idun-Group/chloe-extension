@@ -40,20 +40,32 @@ export default function displaySettingsPage(container: HTMLElement) {
                             </div>
 
                             <ul class="chloe-extension__body__my-lists__container">
-                                <li class="chloe-extension__body__my-lists__container__item">
-                                    <p>
-                                        <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
-                                        Tech & SSII | 9 personnes | 3 entreprises 
-                                    </p> 
-                                    <button class="action-btn"> <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="document icon"/> </button>
-                                </li>
-                                <li class="chloe-extension__body__my-lists__container__item">
-                                    <p> 
-                                        <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
-                                        BTP & Industries | 3 personnes | 5 entreprises
-                                    </p>
-                                    <button class="action-btn"> <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="document icon"/> </button>
-                                </li>
+                                ${
+                                    response.profile.profileList
+                                        ? response.profile.profileList
+                                              .map(
+                                                  (list: {
+                                                      name: string;
+                                                      type:
+                                                          | 'PEOPLE'
+                                                          | 'ORGANISATION';
+                                                  }) => `
+                                            <li class="chloe-extension__body__my-lists__container__item">
+                                                <p>
+                                                    <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
+                                                    ${list.name} | ${
+                                                      {
+                                                          PEOPLE: `0 personnes`,
+                                                          ORGANISATION: `0 entreprises`,
+                                                      }[list.type]
+                                                  }
+                                                </p>
+                                            </li>
+                                        `,
+                                              )
+                                              .join('')
+                                        : '<p>Aucune liste trouvée.</p>'
+                                }
                             </ul>
                         </div>
 

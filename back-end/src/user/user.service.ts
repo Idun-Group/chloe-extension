@@ -60,6 +60,9 @@ export class UserService {
                             default: true,
                         },
                     },
+                    profileList: {
+                        select: { id: true, name: true, type: true },
+                    },
                 },
             });
 

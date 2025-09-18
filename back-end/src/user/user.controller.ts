@@ -9,7 +9,10 @@ export class UserController {
     @UseGuards(JwtAuthGuard)
     @Get('me')
     getProfile(@Req() req: Request) {
-        const profile = this.userService.findByLinkedinId((req.user as { linkedinId: string }).linkedinId);
+        console.log('req.user :', req.user);
+        const profile = this.userService.findByLinkedinId(
+            (req.user as { id: string }).id,
+        );
         return profile;
     }
 }

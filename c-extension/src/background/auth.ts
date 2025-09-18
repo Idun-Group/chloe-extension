@@ -35,10 +35,27 @@ export async function signinWithLinkedin() {
     });
 
     const data = await res.json();
-    console.log('Access Token Response:', data);
 
     if (!res.ok || !data.access_token) {
         throw new Error(`Token exchange failed: ${JSON.stringify(data)}`);
     }
-    return data.access_token;
+
+    await saveToken(data);
+}
+
+type Token = {
+    access_token: string;
+    refresh_token: string;
+};
+
+export async function saveToken(tokens: Token) {
+    await chrome.storage.local.set({ tokens });
+}
+
+export async function getToken(): Promise<Token | null> {
+    const result = await chrome.storage.local.get('tokens');
+    return result.tokens || null;
+}
+export async function clearToken() {
+    await chrome.storage.local.remove('tokens');
 }

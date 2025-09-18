@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { $Enums, User } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -43,10 +42,10 @@ export class UserService {
         }
     }
 
-    async findByLinkedinId(id: string){
+    async findByLinkedinId(id: string) {
         try {
             const user = await this.prisma.user.findUnique({
-                where: { linkedinId: id },
+                where: { id },
                 select: {
                     id: true,
                     linkedinId: true,

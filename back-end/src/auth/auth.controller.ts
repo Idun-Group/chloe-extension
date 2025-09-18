@@ -39,10 +39,10 @@ export class AuthController {
             userInfo.name,
             userInfo.picture,
         );
-        
+
         const accessToken = this.jwtService.sign(
             {
-                id: user.linkedinId,
+                id: user.id,
                 typ: 'access',
             },
 
@@ -51,7 +51,7 @@ export class AuthController {
 
         const refreshToken = this.jwtService.sign(
             {
-                sub: user.linkedinId,
+                id: user.id,
                 typ: 'refresh',
             },
             { expiresIn: this.config.get<string>('JWT_REFRESH_EXPIRATION') },

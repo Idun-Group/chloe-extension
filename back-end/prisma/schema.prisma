@@ -24,6 +24,8 @@ model User {
   createAt   DateTime    @default(now())
   updateAt   DateTime    @default(now())
   aiContext  AIContext[]
+
+  
 }
 
 model AIContext {

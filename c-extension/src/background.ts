@@ -6,7 +6,12 @@ import {
     resetReadiness,
 } from './background/current-pages';
 import getUserProfile from './background/user';
-import { createAIContext } from './background/ai-context';
+import {
+    createAIContext,
+    deleteAIContext,
+    getAIContextById,
+    updateAIContext,
+} from './background/ai-context';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -72,6 +77,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'CREATE_AICONTEXT') {
             const { title, content, default: isDefault } = request.data;
             const result = createAIContext(title, content, isDefault);
+            sendResponse(result);
+        }
+
+        if (request.action === 'GET_AICONTEXT_BY_ID') {
+            const { id } = request.data;
+            // Appelle ta fonction pour récupérer le contexte par ID
+            const context = await getAIContextById(id);
+            sendResponse(context);
+        }
+
+        if (request.action === 'EDIT_AICONTEXT') {
+            const { id, title, content, default: isDefault } = request.data;
+            const result = await updateAIContext(id, title, content, isDefault);
+            sendResponse(result);
+        }
+
+        if (request.action === 'DELETE_AICONTEXT') {
+            const { id } = request.data;
+            const result = await deleteAIContext(id);
             sendResponse(result);
         }
     })();

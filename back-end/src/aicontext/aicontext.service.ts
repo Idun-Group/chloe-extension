@@ -31,11 +31,11 @@ export class AicontextService {
         }
     }
 
-    async getAIContextsByOwner(ownerId: string) {
+    async getAIContextById(id: string) {
         try {
-            const contexts = await this.prisma.aIContext.findMany({
+            const contexts = await this.prisma.aIContext.findUnique({
                 where: {
-                    ownerId: ownerId,
+                    id: id,
                 },
             });
             return contexts;

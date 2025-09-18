@@ -1,7 +1,9 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
+    Param,
     Post,
     Put,
     Req,
@@ -15,12 +17,12 @@ import { CreateAIContextDto } from './dto/aicontext.dto';
 export class AicontextController {
     constructor(private readonly aicontextService: AicontextService) {}
 
-    @UseGuards(JwtAuthGuard)
-    @Get()
-    async getAIContexts(@Req() request) {
-        const ownerId = request.user.id;
-        return this.aicontextService.getAIContextsByOwner(ownerId);
-    }
+    // @UseGuards(JwtAuthGuard)
+    // @Get()
+    // async getAIContexts(@Req() request) {
+    //     const ownerId = request.user.id;
+    //     return this.aicontextService.getAIContextsByOwner(ownerId);
+    // }
 
     @UseGuards(JwtAuthGuard)
     @Post()
@@ -49,8 +51,26 @@ export class AicontextController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Put('update')
+    @Get(':id')
+    async getAIContextById(@Param('id') id: string, @Req() request) {
+        const ownerId = request.user.id;
+
+        try {
+            const context = await this.aicontextService.getAIContextById(id);
+
+            if (context?.ownerId !== ownerId) {
+                throw new Error('Unauthorized access to this context');
+            }
+            return context;
+        } catch (error) {
+            throw new Error('Failed to fetch AI context');
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Put(':id')
     async updateAIContext(
+        @Param('id') id: string,
         @Req() request,
         @Body()
         body: {
@@ -78,14 +98,13 @@ export class AicontextController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('delete')
-    async deleteAIContext(@Req() request, @Body() body: { contextId: string }) {
+    @Delete(':id')
+    async deleteAIContext(@Param('id') id: string, @Req() request) {
         const ownerId = request.user.id;
-        const { contextId } = body;
 
         try {
             const deletedContext = await this.aicontextService.deleteAIContext(
-                contextId,
+                id,
                 ownerId,
             );
             return deletedContext;

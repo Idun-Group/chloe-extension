@@ -96,9 +96,19 @@ export function closeModal() {
     }
 }
 
-export function displayCreateContextModal() {
+export function displayCreateContextModal(
+    type: 'create' | 'edit' = 'create',
+    contextData?: {
+        id: string;
+        title: string;
+        content: string;
+        default: boolean;
+    },
+) {
     displayModal();
     const modalOverlay = document.getElementById('modal-overlay');
+
+    console.log(contextData);
     if (modalOverlay) {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'modal-content create-context';
@@ -115,6 +125,24 @@ export function displayCreateContextModal() {
             </form>
         `;
         modalOverlay.appendChild(contentDiv);
+
+        // Pré-remplissage des champs en mode édition
+        if (type === 'edit' && contextData) {
+            const contextNameInput = document.getElementById(
+                'context-name',
+            ) as HTMLInputElement;
+            const contextDescriptionInput = document.getElementById(
+                'context-description',
+            ) as HTMLTextAreaElement;
+            const isDefaultInput = document.getElementById(
+                'is-default',
+            ) as HTMLInputElement;
+            if (contextNameInput)
+                contextNameInput.value = contextData.title || '';
+            if (contextDescriptionInput)
+                contextDescriptionInput.value = contextData.content || '';
+            if (isDefaultInput) isDefaultInput.checked = !!contextData.default;
+        }
 
         const form = document.getElementById('create-context-form');
         form?.addEventListener('submit', (e) => {
@@ -136,35 +164,61 @@ export function displayCreateContextModal() {
                 contextDescription,
                 isDefault,
             });
-
-            chrome.runtime.sendMessage(
-                {
-                    action: 'CREATE_AICONTEXT',
-                    data: {
-                        title: contextName,
-                        content: contextDescription,
-                        default: isDefault,
+            if (type === 'create') {
+                chrome.runtime.sendMessage(
+                    {
+                        action: 'CREATE_AICONTEXT',
+                        data: {
+                            title: contextName,
+                            content: contextDescription,
+                            default: isDefault,
+                        },
                     },
-                },
-                () => {
-                    if (chrome.runtime.lastError) {
-                        console.error(
-                            'runtime error:',
-                            chrome.runtime.lastError,
-                        );
-                        return;
-                    } else {
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            console.error(
+                                'runtime error:',
+                                chrome.runtime.lastError,
+                            );
+                            return;
+                        } else {
+                            const chloeBody = document.getElementById(
+                                'chloe-extension-body',
+                            );
+                            if (chloeBody) {
+                                displaySettingsPage(chloeBody);
+                            }
+                        }
+                    },
+                );
+            } else if (type === 'edit' && contextData) {
+                chrome.runtime.sendMessage(
+                    {
+                        action: 'EDIT_AICONTEXT',
+                        data: {
+                            ...contextData,
+                            title: contextName,
+                            content: contextDescription,
+                            default: isDefault,
+                        },
+                    },
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            console.error(
+                                'runtime error:',
+                                chrome.runtime.lastError,
+                            );
+                            return;
+                        }
                         const chloeBody = document.getElementById(
                             'chloe-extension-body',
                         );
                         if (chloeBody) {
-                            chloeBody.innerHTML = '';
                             displaySettingsPage(chloeBody);
-                            closeModal();
                         }
-                    }
-                },
-            );
+                    },
+                );
+            }
         });
     }
 }

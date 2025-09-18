@@ -74,7 +74,7 @@ export default function displaySettingsPage(container: HTMLElement) {
                                        }) => `
                                     <li data-id="${
                                         context.id
-                                    }" class="chloe-extension__body__my-contexts__container__item">
+                                    }" class="chloe-extension__body__my-contexts__container__item chloe-context-item">
                                         <p> <img src="${imgBaseUrl}/icons/document.png" class="icon" alt="document icon"/> ${
                                            context.title
                                        } </p> ${
@@ -83,8 +83,8 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                : ''
                                        }
                                         <div class="chloe-extension__body__my-contexts__container__item__action"> 
-                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn action-btn"> <img src="${imgBaseUrl}/icons/modify.png" class="icon" alt="document icon"/> </button>
-                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
+                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-modify action-btn"> <img src="${imgBaseUrl}/icons/modify.png" class="icon" alt="document icon"/> </button>
+                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-delete action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
                                         </div>
                                      </li>
                                 `,
@@ -114,6 +114,60 @@ export default function displaySettingsPage(container: HTMLElement) {
 
                     createContextButton?.addEventListener('click', () => {
                         displayCreateContextModal();
+                    });
+
+                    const contextItems = document.querySelectorAll(
+                        '.chloe-context-item',
+                    );
+
+                    contextItems.forEach((item) => {
+                        const contextId = item.getAttribute('data-id');
+                        console.log('Clicked context with id:', contextId);
+                        // Ici, tu peux ajouter le code pour gérer la modification du contexte
+
+                        item.querySelector(
+                            '.chloe-context-modify',
+                        )?.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            console.log('Modify context with id:', contextId);
+
+                            chrome.runtime.sendMessage(
+                                {
+                                    action: 'GET_AICONTEXT_BY_ID',
+                                    data: { id: contextId },
+                                },
+                                (response) => {
+                                    displayCreateContextModal('edit', response);
+                                },
+                            );
+                        });
+
+                        item.querySelector(
+                            '.chloe-context-delete',
+                        )?.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            if (
+                                confirm(
+                                    'Voulez-vous vraiment supprimer ce contexte ?',
+                                )
+                            ) {
+                                chrome.runtime.sendMessage(
+                                    {
+                                        action: 'DELETE_AICONTEXT',
+                                        data: { id: contextId },
+                                    },
+                                    (response) => {
+                                        if (response.ok) {
+                                            displaySettingsPage(container);
+                                        } else {
+                                            alert(
+                                                'Erreur lors de la suppression du contexte',
+                                            );
+                                        }
+                                    },
+                                );
+                            }
+                        });
                     });
                 },
             );

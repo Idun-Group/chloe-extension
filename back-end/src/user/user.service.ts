@@ -52,6 +52,14 @@ export class UserService {
                     email: true,
                     fullName: true,
                     imageUrl: true,
+                    aiContext: {
+                        select: {
+                            id: true,
+                            title: true,
+                            content: true,
+                            default: true,
+                        },
+                    },
                 },
             });
 

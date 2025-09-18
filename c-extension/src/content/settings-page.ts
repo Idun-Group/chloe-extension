@@ -64,27 +64,32 @@ export default function displaySettingsPage(container: HTMLElement) {
                             </div>
 
                             <ul class="chloe-extension__body__my-contexts__container">
-                               ${response.profile.contexts.map(
-                                   (context: {
-                                       title: string;
-                                       content: string;
-                                       isDefault: boolean;
-                                   }) => `
-                                    <li class="chloe-extension__body__my-contexts__container__item">
+                               ${response.profile.aiContext
+                                   .map(
+                                       (context: {
+                                           id: string;
+                                           title: string;
+                                           content: string;
+                                           default: boolean;
+                                       }) => `
+                                    <li data-id="${
+                                        context.id
+                                    }" class="chloe-extension__body__my-contexts__container__item">
                                         <p> <img src="${imgBaseUrl}/icons/document.png" class="icon" alt="document icon"/> ${
-                                       context.title
-                                   } </p> ${
-                                       context.isDefault
-                                           ? '<span class="default-badge">Par défaut</span>'
-                                           : ''
-                                   }
+                                           context.title
+                                       } </p> ${
+                                           context.default
+                                               ? '<span class="default-badge">Par défaut</span>'
+                                               : ''
+                                       }
                                         <div class="chloe-extension__body__my-contexts__container__item__action"> 
                                             <button class="chloe-extension__body__my-contexts__container__item__action__btn action-btn"> <img src="${imgBaseUrl}/icons/modify.png" class="icon" alt="document icon"/> </button>
                                             <button class="chloe-extension__body__my-contexts__container__item__action__btn action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
                                         </div>
                                      </li>
                                 `,
-                               )}
+                                   )
+                                   .join('')}
                             </ul>
                         </div>
 

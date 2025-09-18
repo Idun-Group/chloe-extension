@@ -6,6 +6,7 @@ import {
     resetReadiness,
 } from './background/current-pages';
 import getUserProfile from './background/user';
+import { createAIContext } from './background/ai-context';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -66,6 +67,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'GET_PROFILE') {
             const profile = await getUserProfile();
             sendResponse({ profile });
+        }
+
+        if (request.action === 'CREATE_AICONTEXT') {
+            const { title, content, default: isDefault } = request.data;
+            const result = createAIContext(title, content, isDefault);
+            sendResponse(result);
         }
     })();
     return true;

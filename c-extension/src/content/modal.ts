@@ -1,3 +1,5 @@
+import displaySettingsPage from './settings-page';
+
 export function displayModal() {
     const body = document.getElementById('chloe-extension-body');
     if (body) {
@@ -134,6 +136,35 @@ export function displayCreateContextModal() {
                 contextDescription,
                 isDefault,
             });
+
+            chrome.runtime.sendMessage(
+                {
+                    action: 'CREATE_AICONTEXT',
+                    data: {
+                        title: contextName,
+                        content: contextDescription,
+                        default: isDefault,
+                    },
+                },
+                () => {
+                    if (chrome.runtime.lastError) {
+                        console.error(
+                            'runtime error:',
+                            chrome.runtime.lastError,
+                        );
+                        return;
+                    } else {
+                        const chloeBody = document.getElementById(
+                            'chloe-extension-body',
+                        );
+                        if (chloeBody) {
+                            chloeBody.innerHTML = '';
+                            displaySettingsPage(chloeBody);
+                            closeModal();
+                        }
+                    }
+                },
+            );
         });
     }
 }

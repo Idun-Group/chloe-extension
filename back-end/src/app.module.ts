@@ -8,6 +8,9 @@ import { UserService } from './user/user.service';
 import { PrismaService } from './prisma/prisma.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { UserModule } from './user/user.module';
+import { AicontextController } from './aicontext/aicontext.controller';
+import { AicontextService } from './aicontext/aicontext.service';
+import { AicontextModule } from './aicontext/aicontext.module';
 import Joi from 'joi';
 
 @Module({
@@ -29,8 +32,9 @@ import Joi from 'joi';
         }),
         PrismaModule,
         UserModule,
+        AicontextModule,
     ],
-    controllers: [AppController, AuthController],
-    providers: [AppService, UserService, PrismaService],
+    controllers: [AppController, AuthController, AicontextController],
+    providers: [AppService, UserService, PrismaService, AicontextService],
 })
 export class AppModule {}

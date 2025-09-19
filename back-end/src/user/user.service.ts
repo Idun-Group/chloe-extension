@@ -61,7 +61,12 @@ export class UserService {
                         },
                     },
                     profileList: {
-                        select: { id: true, name: true, type: true },
+                        select: {
+                            id: true,
+                            name: true,
+                            type: true,
+                            peopleProfiles: true,
+                        },
                     },
                 },
             });

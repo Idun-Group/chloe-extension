@@ -250,3 +250,87 @@ export function displayCreateContextModal(
         });
     }
 }
+
+export function displayAddToListModal(
+    profileType: 'PEOPLE' | 'ORGANIZATION',
+    fullName: string,
+    location: string,
+    jobTitle?: string,
+    email?: string,
+    phone?: string,
+) {
+    displayModal();
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) {
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'modal-content add-to-list';
+
+        chrome.runtime.sendMessage(
+            { action: 'GET_PROFILELISTS_BY_TYPE', type: profileType },
+            (response) => {
+                console.log(response);
+                contentDiv.innerHTML = `
+                    <h2 class="add-to-list__title">Ajouter à une liste</h2>
+                    <div id="add-to-list-container" class="add-to-list__container">
+                        ${
+                            response.length === 0
+                                ? `
+                                <p class="add-to-list__no-lists">Aucune liste disponible. Créez-en une nouvelle dans les paramètres.</p>
+                                <button id="create-list-button" class="add-to-list__create-list-button submit-button">Créer une liste</button>`
+                                : `
+                                <ul class="add-to-list__list">
+                                    ${response
+                                        .map(
+                                            (list: {
+                                                id: string;
+                                                name: string;
+                                            }) => `
+                                                <li class="add-to-list__list__item profile-list-item" data-list-id="${list.id}">
+                                                    <span class="add-to-list__list__item__name">${list.name}</span>
+                                                    <button class="add-to-list__list__item__button add-button">Ajouter</button>
+                                                </li>
+                                            `,
+                                        )
+                                        .join(``)}
+                                </ul>
+                            `
+                        }
+                    </div>
+                `;
+
+                contentDiv
+                    .querySelectorAll('.profile-list-item')
+                    .forEach((item) => {
+                        const addButton = item.querySelector(
+                            '.add-button',
+                        ) as HTMLButtonElement;
+
+                        addButton.addEventListener('click', () => {
+                            const listId = item.getAttribute('data-list-id');
+                            const linkedinUrl = window.location.href;
+                            chrome.runtime.sendMessage(
+                                {
+                                    action: 'ADD_TO_LIST',
+                                    type: profileType,
+                                    listId,
+                                    data: {
+                                        linkedinUrl,
+                                        job: jobTitle,
+                                        fullName,
+                                        location,
+                                        email,
+                                        phone,
+                                    },
+                                },
+                                () => {
+                                    alert('Profil ajouté à la liste !');
+                                },
+                            );
+                        });
+                    });
+            },
+        );
+
+        modalOverlay.appendChild(contentDiv);
+    }
+}

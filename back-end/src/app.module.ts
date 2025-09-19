@@ -14,6 +14,9 @@ import { AicontextModule } from './aicontext/aicontext.module';
 import Joi from 'joi';
 import { ProfileListController } from './profile-list/profile-list.controller';
 import { ProfileListService } from './profile-list/profile-list.service';
+import { PeopleProfileController } from './people-profile/people-profile.controller';
+import { PeopleProfileModule } from './people-profile/people-profile.module';
+import { ProfileListModule } from './profile-list/profile-list.module';
 
 @Module({
     imports: [
@@ -35,12 +38,15 @@ import { ProfileListService } from './profile-list/profile-list.service';
         PrismaModule,
         UserModule,
         AicontextModule,
+        PeopleProfileModule,
+        ProfileListModule,
     ],
     controllers: [
         AppController,
         AuthController,
         AicontextController,
         ProfileListController,
+        PeopleProfileController,
     ],
     providers: [
         AppService,

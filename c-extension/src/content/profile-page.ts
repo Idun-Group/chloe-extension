@@ -1,4 +1,7 @@
 // --- Utils pour scrapping posts entreprise
+
+import { displayAddToListModal } from './modal';
+
 // --- Navigation SPA : écoute les changements d'URL et rafraîchit la vue
 let lastUrl = '';
 function getProfileTypeFromUrl(url: string) {
@@ -136,11 +139,12 @@ export function displayProfilePage(
     }
 }
 
-function displayPeoplePage(container: HTMLElement) {
+async function displayPeoplePage(container: HTMLElement) {
     const imgUrl = chrome.runtime.getURL('public/assets/images');
     const user = location.href.split('/')[4];
 
     container.innerHTML = `
+        <button id="add-profile-button" class="add-profile-button"> + </button>
         <div class="chloe-extension__body__profile__introduce">
             <h2 id="profile-full-name" class="chloe-extension__body__profile__introduce__full-name"> Prénom Nom </h2>
             <p> <span id="profile-job"> Job name </span>  <span id="profile-companie"> Entreprise </span> </p>
@@ -205,7 +209,7 @@ function displayPeoplePage(container: HTMLElement) {
         </div>
     `;
 
-    scrapeLinkedinUserProfile();
+    const { fullName, job, userLocation } = await scrapeLinkedinUserProfile();
     container.querySelectorAll('.info-button').forEach((button) => {
         button.addEventListener('mouseover', () => {
             console.log('Info button hovered!');
@@ -219,6 +223,12 @@ function displayPeoplePage(container: HTMLElement) {
                 '_blank',
             );
         });
+
+    const addProfileBtn = container.querySelector('#add-profile-button');
+
+    addProfileBtn?.addEventListener('click', () => {
+        displayAddToListModal('PEOPLE', fullName, userLocation, job);
+    });
 }
 
 const displayCompanyPage = async (container: HTMLElement) => {
@@ -384,6 +394,7 @@ const scrapeLinkedinUserProfile = async () => {
             console.log('Bloc activité non trouvé');
         }
     }, 2000);
+    return { fullName, job, userLocation: location };
 };
 
 interface CompanyTopCard {

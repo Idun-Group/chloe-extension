@@ -49,17 +49,24 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                       type:
                                                           | 'PEOPLE'
                                                           | 'ORGANISATION';
+                                                      peopleProfiles: any[];
                                                   }) => `
                                             <li class="chloe-extension__body__my-lists__container__item">
                                                 <p>
                                                     <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
                                                     ${list.name} | ${
                                                       {
-                                                          PEOPLE: `0 personnes`,
+                                                          PEOPLE: `${list.peopleProfiles.length} personnes`,
                                                           ORGANISATION: `0 entreprises`,
                                                       }[list.type]
                                                   }
                                                 </p>
+
+                                                <button class="go-to-list-button action-btn" data-list-name="${
+                                                    list.name
+                                                }">
+                                                    <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="edit icon"/>
+                                                </button>
                                             </li>
                                         `,
                                               )

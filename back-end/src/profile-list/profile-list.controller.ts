@@ -40,6 +40,21 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get(':type')
+    async getProfileListsByType(@Req() req, @Param('type') type: ListType) {
+        try {
+            const userId = req.user.id;
+            const lists = await this.profileListService.getProfileListsByType(
+                userId,
+                type,
+            );
+            return lists;
+        } catch (error) {
+            throw new Error(`Failed to retrieve profile list: ${error}`);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get()
     async getProfileLists(@Req() req) {
         try {

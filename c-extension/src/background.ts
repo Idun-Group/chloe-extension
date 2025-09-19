@@ -13,10 +13,13 @@ import {
     updateAIContext,
 } from './background/ai-context';
 import {
+    createOrganizationProfile,
+    createPeopleProfile,
     createProfileList,
     deleteProfileList,
     fetchProfileLists,
     getProfileListById,
+    getProfileListsByType,
     updateProfileList,
 } from './background/profil-list';
 
@@ -123,6 +126,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse(result);
         }
 
+        if (request.action === 'GET_PROFILELISTS_BY_TYPE') {
+            const { type } = request;
+            const result = await getProfileListsByType(type);
+            sendResponse(result);
+        }
+
         if (request.action === 'EDIT_PROFILE_LIST') {
             const { id, name, description, type } = request.data;
             const result = await updateProfileList(id, name, description, type);
@@ -132,6 +141,16 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (request.action === 'DELETE_PROFILE_LIST') {
             const { id } = request.data;
             const result = await deleteProfileList(id);
+            sendResponse(result);
+        }
+
+        if (request.action === 'ADD_TO_LIST') {
+            const { type, listId, data } = request;
+
+            const result =
+                type === 'PEOPLE'
+                    ? await createPeopleProfile(listId, data)
+                    : await createOrganizationProfile(listId, data);
             sendResponse(result);
         }
     })();

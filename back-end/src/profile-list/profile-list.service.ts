@@ -19,6 +19,13 @@ export class ProfileListService {
                     description,
                     owner: { connect: { id: ownerId } },
                 },
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    type: true,
+                    peopleProfiles: true,
+                },
             });
 
             return newList;
@@ -31,6 +38,17 @@ export class ProfileListService {
         try {
             const lists = await this.prisma.profileList.findMany({
                 where: { ownerId },
+            });
+            return lists;
+        } catch (error) {
+            throw new Error(`Failed to retrieve profile lists: ${error}`);
+        }
+    }
+
+    async getProfileListsByType(ownerId: string, type: ListType) {
+        try {
+            const lists = await this.prisma.profileList.findMany({
+                where: { ownerId, type },
             });
             return lists;
         } catch (error) {

@@ -45,6 +45,33 @@ export async function getProfileListById(id: string) {
     return response.json();
 }
 
+export async function getProfileListsByType(type: 'PEOPLE' | 'ORGANISATION') {
+    const token = await getToken();
+
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    const response = await fetch(
+        `http://localhost:3000/profile-list?type=${type}`,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+        },
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to fetch profile lists by type: ${response.statusText}`,
+        );
+    }
+
+    return response.json();
+}
+
 export async function createProfileList(
     type: 'PEOPLE' | 'ORGANIZATION',
     name: string,
@@ -132,5 +159,85 @@ export async function deleteProfileList(id: string) {
         );
     }
 
+    return response.json();
+}
+
+export async function createPeopleProfile(
+    listId: string,
+    profileData: {
+        linkedinUrl: string;
+        job?: string;
+        fullName: string;
+        location: string;
+        phone?: string;
+        email?: string;
+    },
+) {
+    const token = await getToken();
+
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    console.log(listId);
+
+    const response = await fetch('http://localhost:3000/people-profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.access_token}`,
+        },
+        body: JSON.stringify({
+            profileListId: listId,
+            ...profileData,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to create people profile: ${response.statusText}`,
+        );
+    }
+
+    return response.json();
+}
+
+export async function createOrganizationProfile(
+    listId: string,
+    profileData: {
+        linkedinUrl: string;
+        job?: string;
+        fullName: string;
+        location: string;
+        phone?: string;
+        email?: string;
+    },
+) {
+    const token = await getToken();
+
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    const response = await fetch('http://localhost:3000/organization-profile', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.access_token}`,
+        },
+        body: JSON.stringify({
+            listId,
+            ...profileData,
+        }),
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to create people profile: ${response.statusText}`,
+        );
+    }
+
+
+    
     return response.json();
 }

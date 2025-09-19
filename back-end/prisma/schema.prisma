@@ -34,6 +34,20 @@ model ProfileList {
   ownerId   String   @db.ObjectId
   type      ListType
   owner     User     @relation(fields: [ownerId], references: [id])
+  peopleProfiles  PeopleProfile[]
+}
+
+model PeopleProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  linkedinUrl String
+  job       String?
+  fullName    String
+  location    String
+  phone       String?
+  email       String?
+  profileListId String   @db.ObjectId
+  profileList ProfileList @relation(fields: [profileListId], references: [id])
+  createdAt   DateTime @default(now())
 }
 
 model AIContext {

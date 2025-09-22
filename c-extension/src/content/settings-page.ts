@@ -48,8 +48,9 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                       name: string;
                                                       type:
                                                           | 'PEOPLE'
-                                                          | 'ORGANISATION';
+                                                          | 'ORGANIZATION';
                                                       peopleProfiles: any[];
+                                                      organizationProfiles: any[];
                                                   }) => `
                                             <li class="chloe-extension__body__my-lists__container__item">
                                                 <p>
@@ -57,7 +58,7 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                     ${list.name} | ${
                                                       {
                                                           PEOPLE: `${list.peopleProfiles.length} personnes`,
-                                                          ORGANISATION: `0 entreprises`,
+                                                          ORGANIZATION: `${list.organizationProfiles.length} entreprises`,
                                                       }[list.type]
                                                   }
                                                 </p>

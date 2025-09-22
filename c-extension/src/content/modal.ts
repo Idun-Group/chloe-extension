@@ -253,11 +253,19 @@ export function displayCreateContextModal(
 
 export function displayAddToListModal(
     profileType: 'PEOPLE' | 'ORGANIZATION',
-    fullName: string,
-    location: string,
-    jobTitle?: string,
-    email?: string,
-    phone?: string,
+    people?: {
+        fullName: string;
+        location: string;
+        job?: string;
+        email?: string;
+        phone?: string;
+    },
+    organization?: {
+        name: string;
+        location: string;
+        industry?: string;
+        employees?: string;
+    },
 ) {
     displayModal();
     const modalOverlay = document.getElementById('modal-overlay');
@@ -307,19 +315,28 @@ export function displayAddToListModal(
 
                         addButton.addEventListener('click', () => {
                             const listId = item.getAttribute('data-list-id');
-                            const linkedinUrl = window.location.href;
+                            const linkedinUrl = location.href;
                             chrome.runtime.sendMessage(
                                 {
                                     action: 'ADD_TO_LIST',
                                     type: profileType,
                                     listId,
                                     data: {
-                                        linkedinUrl,
-                                        job: jobTitle,
-                                        fullName,
-                                        location,
-                                        email,
-                                        phone,
+                                        people: {
+                                            linkedinUrl: linkedinUrl,
+                                            job: people?.job,
+                                            fullName: people?.fullName,
+                                            location: people?.location,
+                                            email: people?.email,
+                                            phone: people?.phone,
+                                        },
+                                        organization: {
+                                            linkedinUrl: linkedinUrl,
+                                            name: organization?.name,
+                                            location: organization?.location,
+                                            industry: organization?.industry,
+                                            size: organization?.employees,
+                                        },
                                     },
                                 },
                                 () => {

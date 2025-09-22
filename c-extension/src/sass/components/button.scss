@@ -54,9 +54,27 @@
     color: $black;
     flex-shrink: 0;
     object-fit: cover;
+    position: relative;
+    &:hover {
+        &::after {
+            content: attr(data-tip);
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            background-color: white;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            white-space: nowrap;
+            font-size: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+    }
 }
 
 .info-container {
+    position: relative;
     display: flex;
 
     align-items: center;
@@ -78,6 +96,43 @@
     img {
         width: 20px;
         height: 20px;
+        object-fit: cover;
+    }
+}
+
+#chloe-floating-btn {
+    position: fixed;
+    z-index: 10000;
+    background-color: transparent;
+    border: none;
+    color: $black;
+    border-radius: 24px;
+    padding: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+
+    transform: scale(1);
+    opacity: 1;
+    left: 20px;
+
+    &.retracted {
+        transform: scale(0);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &:hover {
+        background-color: darken($primary-color, 10%);
+        box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    img {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
         object-fit: cover;
     }
 }

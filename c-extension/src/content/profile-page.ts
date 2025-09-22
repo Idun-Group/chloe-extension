@@ -157,7 +157,7 @@ async function displayPeoplePage(container: HTMLElement) {
                 <p class="info-container"> 
                     téléphone :  <span id="phone"> 06 ** ** ** ** </span> 
                     <button> obtenir </button> 
-                    <div class="info-button"> i </div>
+                    <div class="info-button" data-tip="5 crédits par obtentions"> i </div>
                 </p>
             </div>
 
@@ -166,7 +166,7 @@ async function displayPeoplePage(container: HTMLElement) {
                     email : <span id="email"> ***@***.com </span> 
                     <button> obtenir </button> 
                 </p>
-                <div class="info-button"> i </div>
+                <div class="info-button"data-tip="5 crédits par obtentions"> i </div>
             </div>
         </div>
 
@@ -227,7 +227,11 @@ async function displayPeoplePage(container: HTMLElement) {
     const addProfileBtn = container.querySelector('#add-profile-button');
 
     addProfileBtn?.addEventListener('click', () => {
-        displayAddToListModal('PEOPLE', fullName, userLocation, job);
+        displayAddToListModal('PEOPLE', {
+            fullName,
+            location: userLocation,
+            job,
+        });
     });
 }
 
@@ -235,6 +239,7 @@ const displayCompanyPage = async (container: HTMLElement) => {
     const imgUrl = chrome.runtime.getURL('public/assets/images');
 
     container.innerHTML = `
+        <button id="add-profile-button" class="add-profile-button"> + </button>
         <div class="chloe-extension__body__profile__introduce">
             <h3 id="company-name"> nom de l'entreprise </h3>
             <p> <span id="nb-employees"> 10+ </span> Employés </p>
@@ -291,7 +296,11 @@ const displayCompanyPage = async (container: HTMLElement) => {
         </div>
     `;
 
-    scrapeCompanyTopCard();
+    const companyData = await scrapeCompanyTopCard();
+    const name = companyData?.name || 'Nom de l’entreprise';
+    const location = companyData?.location || 'Paris, France';
+    const industry = companyData?.sector || '';
+    const employees = companyData?.employees || '10+';
 
     // Récupère et affiche le dernier post d'entreprise
     setTimeout(() => {
@@ -335,6 +344,17 @@ const displayCompanyPage = async (container: HTMLElement) => {
             activitySection?.classList.add('hidden');
         }
     }, 800);
+
+    const addProfileBtn = container.querySelector('#add-profile-button');
+
+    addProfileBtn?.addEventListener('click', () => {
+        displayAddToListModal('ORGANIZATION', undefined, {
+            name,
+            location,
+            industry,
+            employees,
+        });
+    });
 };
 
 const scrapeLinkedinUserProfile = async () => {
@@ -483,11 +503,17 @@ export async function scrapeCompanyTopCard() {
                 200,
             )
         )?.textContent?.trim() || '';
-    dom.name && (dom.name.textContent = companyName);
-    dom.website && (dom.website.textContent = companyWebsite);
-    dom.website && dom.website.classList.toggle('hidden', !companyWebsite);
     dom.employees && (dom.employees.textContent = employees || '10+');
     dom.location && (dom.location.textContent = location || 'Paris, France');
+
+    return {
+        name: companyName,
+        sector,
+        specialty,
+        location,
+        employees,
+        followers,
+    };
 }
 
 export function highlightTagsInElement(el: HTMLElement) {

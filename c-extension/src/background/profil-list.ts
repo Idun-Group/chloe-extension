@@ -163,7 +163,7 @@ export async function deleteProfileList(id: string) {
 }
 
 export async function createPeopleProfile(
-    listId: string,
+    profileListId: string,
     profileData: {
         linkedinUrl: string;
         job?: string;
@@ -179,7 +179,7 @@ export async function createPeopleProfile(
         throw new Error('No token found');
     }
 
-    console.log(listId);
+    console.log(profileData);
 
     const response = await fetch('http://localhost:3000/people-profile', {
         method: 'POST',
@@ -188,7 +188,7 @@ export async function createPeopleProfile(
             Authorization: `Bearer ${token.access_token}`,
         },
         body: JSON.stringify({
-            profileListId: listId,
+            profileListId,
             ...profileData,
         }),
     });
@@ -203,21 +203,21 @@ export async function createPeopleProfile(
 }
 
 export async function createOrganizationProfile(
-    listId: string,
+    profileListId: string,
     profileData: {
         linkedinUrl: string;
-        job?: string;
-        fullName: string;
-        location: string;
-        phone?: string;
-        email?: string;
+        name: string;
+        location?: string;
+        industry?: string;
+        size?: string;
     },
 ) {
     const token = await getToken();
-
+    profileData;
     if (!token) {
         throw new Error('No token found');
     }
+    console.log(profileData);
 
     const response = await fetch('http://localhost:3000/organization-profile', {
         method: 'POST',
@@ -226,7 +226,7 @@ export async function createOrganizationProfile(
             Authorization: `Bearer ${token.access_token}`,
         },
         body: JSON.stringify({
-            listId,
+            profileListId,
             ...profileData,
         }),
     });
@@ -237,7 +237,5 @@ export async function createOrganizationProfile(
         );
     }
 
-
-    
     return response.json();
 }

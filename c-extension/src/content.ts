@@ -13,33 +13,69 @@ import displaySettingsPage from './content/settings-page';
     }
 })();
 
+const globalNav = document.querySelector<HTMLElement>('.global-nav');
+
 const container = document.createElement('div');
 container.id = 'chloe-extension-root'; // <— ID unique
 container.innerHTML = `
-  <div class="chloe-extension" id="chloe-extension">
-    <header class="chloe-extension__header">
-      <button id="chloe-extension-title-btn">
-        <h2  class="chloe-extension__header__title">
-            <img class="chloe-extension__header__title__logo" src="${chrome.runtime.getURL(
-                'public/assets/images',
-            )}/brand/chloe.jpg" alt="Chloe Icon" />
-            Chloe
-        </h2>
-      </button>
-      <button id="settings-btn" class="chloe-extension__header__btn--user">
-        <img class="chloe-extension__header__btn--user__icon" src="${chrome.runtime.getURL(
-            'public/assets/images',
-        )}/icons/user.png" alt="User Icon" />
-      </button>
-    </header>
-    <section id="chloe-extension-body" class="chloe-extension__body">
-      <p>Welcome to the Chloe Extension !</p>
-    </section>
-  </div>
+    <button type="button" id="chloe-floating-btn" style="top: ${
+        globalNav ? globalNav.offsetHeight + 24 : 70 + 25
+    }px"> <img class="chloe-floating-btn__icon" src="${chrome.runtime.getURL(
+    'public/assets/images',
+)}/brand/chloe.jpg" alt="Chloe Icon" /> </button>
+    <div class="chloe-extension retracted" id="chloe-extension">
+
+            
+        <header class="chloe-extension__header">
+        <button id="chloe-extension-title-btn">
+            <h2  class="chloe-extension__header__title">
+                <img class="chloe-extension__header__title__logo" src="${chrome.runtime.getURL(
+                    'public/assets/images',
+                )}/brand/chloe.jpg" alt="Chloe Icon" />
+                Chloe
+            </h2>
+        </button>
+        <div style="display: flex; align-items: center;">
+            <button id="settings-btn" class="chloe-extension__header__btn--user action-btn" style="padding: 8px; margin: 0 !important">
+                <img class="chloe-extension__header__btn--user__icon" src="${chrome.runtime.getURL(
+                    'public/assets/images',
+                )}/icons/settings.png" alt="User Icon" />
+            </button>
+            <button id="retract-btn" class="chloe-extension__top-bar__btn-retract chloe-extension__header__btn--user" style="padding: 8px; margin: 0 !important; font-size: 18px; font-weight: bold"> — </button> 
+        </div>
+        </header>
+        <section id="chloe-extension-body" class="chloe-extension__body">
+        <p>Welcome to the Chloe Extension !</p>
+        </section>
+    </div>
 `;
 document.body.appendChild(container);
 
+// Sélecteurs sûrs
+const shell = document.getElementById('chloe-extension')!;
+const bodyEl = document.getElementById('chloe-extension-body')!;
+const settingsBtn = document.getElementById('settings-btn');
+
 const titleButton = document.getElementById('chloe-extension-title-btn');
+
+const chloeFloatingBtn = document.getElementById('chloe-floating-btn');
+const retractButton = document.getElementById('retract-btn');
+
+chloeFloatingBtn?.addEventListener('click', () => {
+    const shell = document.getElementById('chloe-extension');
+    if (shell && chloeFloatingBtn) {
+        shell.classList.remove('retracted');
+        chloeFloatingBtn.classList.add('retracted');
+    }
+});
+
+retractButton?.addEventListener('click', () => {
+    const shell = document.getElementById('chloe-extension');
+    if (shell && chloeFloatingBtn) {
+        shell.classList.add('retracted');
+        chloeFloatingBtn.classList.remove('retracted');
+    }
+});
 
 titleButton?.addEventListener('click', () => {
     if (location.href.includes('/in/')) {
@@ -48,11 +84,6 @@ titleButton?.addEventListener('click', () => {
         displayProfilePage(bodyEl, 'organization');
     }
 });
-
-// Sélecteurs sûrs
-const shell = document.getElementById('chloe-extension')!;
-const bodyEl = document.getElementById('chloe-extension-body')!;
-const settingsBtn = document.getElementById('settings-btn');
 
 settingsBtn?.addEventListener('click', () => {
     displaySettingsPage(bodyEl);
@@ -64,10 +95,10 @@ function renderFor(url: string) {
     const isOrg = url.includes('/company/') || url.includes('/school/');
 
     if (isProfile || isOrg) {
-        shell.classList.remove('hidden');
+        shell.classList.remove('retracted');
         displayProfilePage(bodyEl, isProfile ? 'people' : 'organization');
     } else {
-        shell.classList.add('hidden');
+        shell.classList.add('retracted');
     }
 }
 

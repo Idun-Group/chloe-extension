@@ -149,8 +149,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
             const result =
                 type === 'PEOPLE'
-                    ? await createPeopleProfile(listId, data)
-                    : await createOrganizationProfile(listId, data);
+                    ? await createPeopleProfile(listId, data.people)
+                    : await createOrganizationProfile(
+                          listId,
+                          data.organization,
+                      );
             sendResponse(result);
         }
     })();

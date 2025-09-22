@@ -6,7 +6,7 @@
     width: 450px;
     height: 80vh;
     bottom: 64px;
-    right: 64px;
+    left: 24px;
     z-index: 999;
     box-shadow: 2px 4px 10px black;
 
@@ -16,6 +16,16 @@
     flex-direction: column; // NEW
     box-sizing: border-box; // NEW
     overflow: hidden; // au lieu de overflow-y: hidden
+    transition: transform 0.3s ease-in-out;
+    opacity: 1;
+    transform-origin: top left;
+    transform: scale(1);
+
+    &.retracted {
+        opacity: 0;
+        transform: scale(0);
+        pointer-events: none;
+    }
 
     * {
         box-sizing: border-box;

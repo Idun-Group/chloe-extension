@@ -26,7 +26,7 @@ export class OrganizationProfileService {
         if (existingProfile) {
             // Mettre à jour le profil existant
             return this.prisma.organizationProfile.update({
-                where: { id: existingProfile.id },
+                where: { id: existingProfile.id, linkedinUrl },
                 data: {
                     name,
                     location,

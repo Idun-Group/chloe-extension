@@ -11,6 +11,34 @@
         margin: 0 16px;
         font-size: 12px;
     }
+
+    #chloe-extension-title-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        margin: 0;
+    }
+
+    #add-profile-button {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        width: 32px !important;
+        height: 32px !important;
+        display: flex;
+        align-items: center !important;
+        justify-content: center !important;
+        font-size: 28px !important;
+        font-weight: bold;
+        color: $black !important;
+        border: 1px solid $black !important;
+        padding: 4px 12px !important;
+        border-radius: 14px !important;
+        cursor: pointer !important;
+        margin: 0 16px !important;
+        font-size: 12px !important;
+    }
 }
 
 .info-button {

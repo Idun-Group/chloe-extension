@@ -1,3 +1,5 @@
+import displaySettingsPage from './settings-page';
+
 export function displayModal() {
     const body = document.getElementById('chloe-extension-body');
     if (body) {
@@ -45,18 +47,20 @@ export function displayCreateListModal() {
                     <label for="list-name" class="create-list__label">Nom de la liste :</label>
                     <input type="text" id="list-name" name="list-name" class="create-list__input" required />
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="entreprise" name="entreprise" class="create-list__checkbox" />
-                    <label for="entreprise" class="create-list__label create-list__label--checkbox">Entreprise & école</label>
+
+                <div class="create-list__field-group">
+                    <label for="list-description" class="create-list__label">Description :</label>
+                    <textarea id="list-description" name="list-description" class="create-list__textarea" resize rows="4"></textarea>
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="user" name="user" class="create-list__checkbox" />
-                    <label for="user" class="create-list__label create-list__label--checkbox">Utilisateur</label>
+
+                <div class="create-list__field-group">
+                    <label for="list-type" class="create-list__label">Type de liste :</label>
+                    <select id="list-type" name="list-type" class="create-list__select">
+                        <option value="PEOPLE">Personnes</option>
+                        <option value="ORGANIZATION">Entreprises</option>
+                    </select>
                 </div>
-                <div class="create-list__checkbox-group">
-                    <input type="checkbox" id="is-private" name="is-private" class="create-list__checkbox" />
-                    <label for="is-private" class="create-list__label create-list__label--checkbox">Privée</label>
-                </div>
+
                 <button type="submit" class="create-list__submit-button submit-button">Créer ma liste</button>
             </form>
         `;
@@ -69,20 +73,46 @@ export function displayCreateListModal() {
                 'list-name',
             ) as HTMLInputElement;
             const listName = listNameInput.value;
-            const isEntreprise = (
-                document.getElementById('entreprise') as HTMLInputElement
-            ).checked;
-            const isUser = (document.getElementById('user') as HTMLInputElement)
-                .checked;
-            const isPrivate = (
-                document.getElementById('is-private') as HTMLInputElement
-            ).checked;
+
+            const listDescriptionInput = document.getElementById(
+                'list-description',
+            ) as HTMLTextAreaElement;
+
+            const listTypeSelect = document.getElementById(
+                'list-type',
+            ) as HTMLSelectElement;
             console.log('Creating list:', {
                 listName,
-                isEntreprise,
-                isUser,
-                isPrivate,
+                listDescription: listDescriptionInput.value,
+                listType: listTypeSelect.value,
             });
+
+            chrome.runtime.sendMessage(
+                {
+                    action: 'CREATE_PROFILE_LIST',
+                    data: {
+                        name: listName,
+                        description: listDescriptionInput.value,
+                        type: listTypeSelect.value,
+                    },
+                },
+                (response) => {
+                    if (response.success) {
+                        console.log(
+                            'List created successfully:',
+                            response.data,
+                        );
+
+                        displaySettingsPage(
+                            document.getElementById(
+                                'chloe-extension-body',
+                            ) as HTMLElement,
+                        );
+                    } else {
+                        console.error('Error creating list:', response.error);
+                    }
+                },
+            );
         });
     }
 }
@@ -94,9 +124,19 @@ export function closeModal() {
     }
 }
 
-export function displayCreateContextModal() {
+export function displayCreateContextModal(
+    type: 'create' | 'edit' = 'create',
+    contextData?: {
+        id: string;
+        title: string;
+        content: string;
+        default: boolean;
+    },
+) {
     displayModal();
     const modalOverlay = document.getElementById('modal-overlay');
+
+    console.log(contextData);
     if (modalOverlay) {
         const contentDiv = document.createElement('div');
         contentDiv.className = 'modal-content create-context';
@@ -113,6 +153,24 @@ export function displayCreateContextModal() {
             </form>
         `;
         modalOverlay.appendChild(contentDiv);
+
+        // Pré-remplissage des champs en mode édition
+        if (type === 'edit' && contextData) {
+            const contextNameInput = document.getElementById(
+                'context-name',
+            ) as HTMLInputElement;
+            const contextDescriptionInput = document.getElementById(
+                'context-description',
+            ) as HTMLTextAreaElement;
+            const isDefaultInput = document.getElementById(
+                'is-default',
+            ) as HTMLInputElement;
+            if (contextNameInput)
+                contextNameInput.value = contextData.title || '';
+            if (contextDescriptionInput)
+                contextDescriptionInput.value = contextData.content || '';
+            if (isDefaultInput) isDefaultInput.checked = !!contextData.default;
+        }
 
         const form = document.getElementById('create-context-form');
         form?.addEventListener('submit', (e) => {
@@ -134,6 +192,145 @@ export function displayCreateContextModal() {
                 contextDescription,
                 isDefault,
             });
+            if (type === 'create') {
+                chrome.runtime.sendMessage(
+                    {
+                        action: 'CREATE_AICONTEXT',
+                        data: {
+                            title: contextName,
+                            content: contextDescription,
+                            default: isDefault,
+                        },
+                    },
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            console.error(
+                                'runtime error:',
+                                chrome.runtime.lastError,
+                            );
+                            return;
+                        } else {
+                            const chloeBody = document.getElementById(
+                                'chloe-extension-body',
+                            );
+                            if (chloeBody) {
+                                displaySettingsPage(chloeBody);
+                            }
+                        }
+                    },
+                );
+            } else if (type === 'edit' && contextData) {
+                chrome.runtime.sendMessage(
+                    {
+                        action: 'EDIT_AICONTEXT',
+                        data: {
+                            ...contextData,
+                            title: contextName,
+                            content: contextDescription,
+                            default: isDefault,
+                        },
+                    },
+                    () => {
+                        if (chrome.runtime.lastError) {
+                            console.error(
+                                'runtime error:',
+                                chrome.runtime.lastError,
+                            );
+                            return;
+                        }
+                        const chloeBody = document.getElementById(
+                            'chloe-extension-body',
+                        );
+                        if (chloeBody) {
+                            displaySettingsPage(chloeBody);
+                        }
+                    },
+                );
+            }
         });
+    }
+}
+
+export function displayAddToListModal(
+    profileType: 'PEOPLE' | 'ORGANIZATION',
+    fullName: string,
+    location: string,
+    jobTitle?: string,
+    email?: string,
+    phone?: string,
+) {
+    displayModal();
+    const modalOverlay = document.getElementById('modal-overlay');
+    if (modalOverlay) {
+        const contentDiv = document.createElement('div');
+        contentDiv.className = 'modal-content add-to-list';
+
+        chrome.runtime.sendMessage(
+            { action: 'GET_PROFILELISTS_BY_TYPE', type: profileType },
+            (response) => {
+                console.log(response);
+                contentDiv.innerHTML = `
+                    <h2 class="add-to-list__title">Ajouter à une liste</h2>
+                    <div id="add-to-list-container" class="add-to-list__container">
+                        ${
+                            response.length === 0
+                                ? `
+                                <p class="add-to-list__no-lists">Aucune liste disponible. Créez-en une nouvelle dans les paramètres.</p>
+                                <button id="create-list-button" class="add-to-list__create-list-button submit-button">Créer une liste</button>`
+                                : `
+                                <ul class="add-to-list__list">
+                                    ${response
+                                        .map(
+                                            (list: {
+                                                id: string;
+                                                name: string;
+                                            }) => `
+                                                <li class="add-to-list__list__item profile-list-item" data-list-id="${list.id}">
+                                                    <span class="add-to-list__list__item__name">${list.name}</span>
+                                                    <button class="add-to-list__list__item__button add-button">Ajouter</button>
+                                                </li>
+                                            `,
+                                        )
+                                        .join(``)}
+                                </ul>
+                            `
+                        }
+                    </div>
+                `;
+
+                contentDiv
+                    .querySelectorAll('.profile-list-item')
+                    .forEach((item) => {
+                        const addButton = item.querySelector(
+                            '.add-button',
+                        ) as HTMLButtonElement;
+
+                        addButton.addEventListener('click', () => {
+                            const listId = item.getAttribute('data-list-id');
+                            const linkedinUrl = window.location.href;
+                            chrome.runtime.sendMessage(
+                                {
+                                    action: 'ADD_TO_LIST',
+                                    type: profileType,
+                                    listId,
+                                    data: {
+                                        linkedinUrl,
+                                        job: jobTitle,
+                                        fullName,
+                                        location,
+                                        email,
+                                        phone,
+                                    },
+                                },
+                                () => {
+                                    alert('Profil ajouté à la liste !');
+                                },
+                            );
+                        });
+                    });
+            },
+        );
+
+        modalOverlay.appendChild(contentDiv);
     }
 }

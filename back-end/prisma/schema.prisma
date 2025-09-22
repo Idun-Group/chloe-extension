@@ -1,0 +1,92 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @default(auto())   @id @map("_id") @db.ObjectId
+  linkedinId  String  @unique
+  email      String      @unique
+  linkedinToken String?
+  fullName   String
+  imageUrl   String
+  createAt   DateTime    @default(now())
+  updateAt   DateTime    @default(now())
+  aiContext  AIContext[]
+  profileList ProfileList[]
+}
+
+model ProfileList {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  description   String
+  ownerId   String   @db.ObjectId
+  type      ListType
+  owner     User     @relation(fields: [ownerId], references: [id])
+  peopleProfiles  PeopleProfile[]
+  organizationProfiles OrganizationProfile[]
+}
+
+model PeopleProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  linkedinUrl String
+  job       String?
+  fullName    String
+  location    String
+  phone       String?
+  email       String?
+  profileListId String   @db.ObjectId
+  profileList ProfileList @relation(fields: [profileListId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model OrganizationProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  linkedinUrl String
+  name        String
+  location    String?
+  industry    String?
+  size        String?
+  profileListId String   @db.ObjectId
+  profileList ProfileList @relation(fields: [profileListId], references: [id])
+  updatedAt   DateTime @default(now())
+}
+
+model AIContext {
+  id      String  @id @default(auto()) @map("_id") @db.ObjectId
+  title   String
+  content String
+  default Boolean
+  ownerId String  @db.ObjectId
+  owner   User    @relation(fields: [ownerId], references: [id])
+}
+
+model Right {
+  id   String @id @default(auto()) @map("_id") @db.ObjectId
+  role Role
+  userId String  @db.ObjectId @unique
+}
+
+enum Role {
+  FREE
+  PLUS
+  PREMIUM
+}
+
+
+enum ListType {
+  PEOPLE
+  ORGANIZATION
+}

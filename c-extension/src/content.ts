@@ -18,12 +18,14 @@ container.id = 'chloe-extension-root'; // <— ID unique
 container.innerHTML = `
   <div class="chloe-extension" id="chloe-extension">
     <header class="chloe-extension__header">
-      <h2 class="chloe-extension__header__title">
-        <img class="chloe-extension__header__title__logo" src="${chrome.runtime.getURL(
-            'public/assets/images',
-        )}/brand/chloe.jpg" alt="Chloe Icon" />
-        Chloe
-      </h2>
+      <button id="chloe-extension-title-btn">
+        <h2  class="chloe-extension__header__title">
+            <img class="chloe-extension__header__title__logo" src="${chrome.runtime.getURL(
+                'public/assets/images',
+            )}/brand/chloe.jpg" alt="Chloe Icon" />
+            Chloe
+        </h2>
+      </button>
       <button id="settings-btn" class="chloe-extension__header__btn--user">
         <img class="chloe-extension__header__btn--user__icon" src="${chrome.runtime.getURL(
             'public/assets/images',
@@ -36,6 +38,16 @@ container.innerHTML = `
   </div>
 `;
 document.body.appendChild(container);
+
+const titleButton = document.getElementById('chloe-extension-title-btn');
+
+titleButton?.addEventListener('click', () => {
+    if (location.href.includes('/in/')) {
+        displayProfilePage(bodyEl, 'people');
+    } else {
+        displayProfilePage(bodyEl, 'organization');
+    }
+});
 
 // Sélecteurs sûrs
 const shell = document.getElementById('chloe-extension')!;

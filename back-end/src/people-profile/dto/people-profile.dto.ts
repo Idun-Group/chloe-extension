@@ -1,9 +1,13 @@
-export class PeopleProfileCreateInput {
-    linkedinUrl: string;
-    job?: string;
-    fullName: string;
-    location: string;
-    phone?: string;
-    email?: string;
-    profileListId: string;
+import { IsOptional, IsString, IsUrl } from 'class-validator';
+
+export default class CreatePeopleProfileDto {
+    @IsString() profileListId!: string;
+
+    @IsUrl() linkedinUrl!: string;
+
+    @IsOptional() @IsString() job?: string;
+    @IsString() fullName!: string;
+    @IsString() location!: string;
+    @IsOptional() @IsString() phone?: string;
+    @IsOptional() @IsString() email?: string;
 }

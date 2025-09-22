@@ -17,6 +17,7 @@ import { ProfileListService } from './profile-list/profile-list.service';
 import { PeopleProfileController } from './people-profile/people-profile.controller';
 import { PeopleProfileModule } from './people-profile/people-profile.module';
 import { ProfileListModule } from './profile-list/profile-list.module';
+import { OrganizationProfileModule } from './organization-profile/organization-profile.module';
 
 @Module({
     imports: [
@@ -40,6 +41,7 @@ import { ProfileListModule } from './profile-list/profile-list.module';
         AicontextModule,
         PeopleProfileModule,
         ProfileListModule,
+        OrganizationProfileModule,
     ],
     controllers: [
         AppController,

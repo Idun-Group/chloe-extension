@@ -1,15 +1,16 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { PeopleProfileService } from './people-profile.service';
-import { PeopleProfileCreateInput } from './dto/people-profile.dto';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import CreatePeopleProfileDto from './dto/people-profile.dto';
 
 @Controller('people-profile')
 export class PeopleProfileController {
     constructor(private readonly peopleProfileService: PeopleProfileService) {}
 
+    @UseGuards(JwtAuthGuard)
     @Post()
-    async create(@Body() body: PeopleProfileCreateInput) {
+    async create(@Body() body: CreatePeopleProfileDto) {
         try {
-            console.log(body);
             const newProfile =
                 await this.peopleProfileService.createPeopleProfile(
                     body.profileListId,

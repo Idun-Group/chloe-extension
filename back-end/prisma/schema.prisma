@@ -35,6 +35,7 @@ model ProfileList {
   type      ListType
   owner     User     @relation(fields: [ownerId], references: [id])
   peopleProfiles  PeopleProfile[]
+  organizationProfiles OrganizationProfile[]
 }
 
 model PeopleProfile {
@@ -48,6 +49,19 @@ model PeopleProfile {
   profileListId String   @db.ObjectId
   profileList ProfileList @relation(fields: [profileListId], references: [id])
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now())
+}
+
+model OrganizationProfile {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  linkedinUrl String
+  name        String
+  location    String?
+  industry    String?
+  size        String?
+  profileListId String   @db.ObjectId
+  profileList ProfileList @relation(fields: [profileListId], references: [id])
+  updatedAt   DateTime @default(now())
 }
 
 model AIContext {

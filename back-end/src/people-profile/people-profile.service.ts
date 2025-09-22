@@ -14,17 +14,41 @@ export class PeopleProfileService {
         phone: string | undefined,
         email: string | undefined,
     ) {
-        return this.prisma.peopleProfile.create({
-            data: {
+        // Vérifier si le profil existe déjà
+        const existingProfile = await this.prisma.peopleProfile.findFirst({
+            where: {
+                profileListId,
                 linkedinUrl,
-                job,
-                fullName,
-                location,
-                phone,
-                email,
-                profileList: { connect: { id: profileListId } },
             },
         });
+
+        if (existingProfile) {
+            // Mettre à jour le profil existant
+            return this.prisma.peopleProfile.update({
+                where: { id: existingProfile.id },
+                data: {
+                    fullName,
+                    location,
+                    job,
+                    phone,
+                    email,
+                    updatedAt: new Date(),
+                },
+            });
+        } else {
+            // Créer un nouveau profil
+            return this.prisma.peopleProfile.create({
+                data: {
+                    linkedinUrl,
+                    job,
+                    fullName,
+                    location,
+                    phone,
+                    email,
+                    profileList: { connect: { id: profileListId } },
+                },
+            });
+        }
     }
 
     async getPeopleProfileById(id: string) {

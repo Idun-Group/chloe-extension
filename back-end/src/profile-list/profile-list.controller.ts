@@ -6,6 +6,7 @@ import {
     Param,
     Post,
     Put,
+    Query,
     Req,
     UseGuards,
 } from '@nestjs/common';
@@ -40,8 +41,8 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get(':type')
-    async getProfileListsByType(@Req() req, @Param('type') type: ListType) {
+    @Get()
+    async getProfileListsByType(@Req() req, @Query('type') type: ListType) {
         try {
             const userId = req.user.id;
             const lists = await this.profileListService.getProfileListsByType(

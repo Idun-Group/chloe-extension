@@ -203,34 +203,39 @@ export class ProfileListController {
                     '📊 Processing PEOPLE profiles:',
                     profileList.peopleProfiles?.length || 0,
                 );
-                // Normalize people profiles data for CSV export
+                // Normalize people profiles data for CSV export (UTF-8)
                 dataToConvert =
                     profileList.peopleProfiles?.map((profile) => ({
-                        id: profile.id,
-                        linkedinUrl: profile.linkedinUrl,
-                        fullName: profile.fullName,
-                        job: profile.job || '',
-                        location: profile.location,
-                        phone: profile.phone || '',
+                        'linkedin de la cible': profile.linkedinUrl,
+                        nom: profile.fullName.split(' ')[0],
+                        prénom: profile.fullName.split(' ')[1] || '',
+                        "rôle de l'entreprise": profile.job || '',
+                        localisation: profile.location,
+                        téléphone: profile.phone || '',
                         email: profile.email || '',
-                        createdAt: profile.createdAt,
-                        updatedAt: profile.updatedAt,
+                        'date de création': new Date(
+                            profile.createdAt,
+                        ).toLocaleDateString('fr-FR'),
+                        'date de mise à jour': new Date(
+                            profile.updatedAt,
+                        ).toLocaleDateString('fr-FR'),
                     })) || [];
             } else {
                 console.log(
                     '🏢 Processing ORGANIZATION profiles:',
                     profileList.organizationProfiles?.length || 0,
                 );
-                // Normalize organization profiles data for CSV export
+                // Normalize organization profiles data for CSV export (UTF-8)
                 dataToConvert =
                     profileList.organizationProfiles?.map((profile) => ({
-                        id: profile.id,
-                        linkedinUrl: profile.linkedinUrl,
-                        name: profile.name,
-                        location: profile.location || '',
-                        industry: profile.industry || '',
-                        size: profile.size || '',
-                        updatedAt: profile.updatedAt,
+                        "nom de l'entreprise": profile.name,
+                        localisation: profile.location || '',
+                        secteur: profile.industry || '',
+                        "taille de l'entreprise": profile.size || '',
+                        'date de mise à jour': new Date(
+                            profile.updatedAt,
+                        ).toLocaleDateString('fr-FR'),
+                        "linkedin de l'entreprise": profile.linkedinUrl,
                     })) || [];
             }
 
@@ -251,9 +256,12 @@ export class ProfileListController {
                 csvData.length,
             );
 
-            return new StreamableFile(Buffer.from(csvData), {
+            // Créer le buffer avec encodage UTF-8 explicite
+            const csvBuffer = Buffer.from(csvData, 'utf8');
+
+            return new StreamableFile(csvBuffer, {
                 type: 'text/csv; charset=utf-8',
-                disposition: `attachment; filename="${profileList.name.split(' ').join('_')}.csv"`,
+                disposition: `attachment; filename*=UTF-8''${encodeURIComponent(profileList.name.split(' ').join('_'))}.csv`,
             });
         } catch (error) {
             console.error('💥 CSV export error:', error);

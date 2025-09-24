@@ -264,7 +264,8 @@ export async function downloadProfileList(id: string) {
                 method: 'GET',
                 headers: {
                     Authorization: `Bearer ${token.access_token}`,
-                    Accept: 'text/csv',
+                    Accept: 'text/csv; charset=utf-8',
+                    'Accept-Charset': 'utf-8',
                 },
             },
         );
@@ -282,20 +283,38 @@ export async function downloadProfileList(id: string) {
             throw new Error('Received empty file');
         }
 
-        // Extract filename from Content-Disposition header or use default
+        // Extract filename from Content-Disposition header or use default (UTF-8 compatible)
         const contentDisposition = res.headers.get('Content-Disposition');
         const filename = getFilenameFromCD(contentDisposition, 'profiles.csv');
-        console.log('📄 Filename:', filename);
+        console.log('📄 Filename extracted:', filename);
+        console.log('📄 Content-Disposition header:', contentDisposition);
 
-        // Convert blob to data URL for service worker compatibility
+        // Convert blob to data URL for service worker compatibility (UTF-8 safe)
         const arrayBuffer = await blob.arrayBuffer();
-        const bytes = new Uint8Array(arrayBuffer);
+
+        // Méthode UTF-8 safe : utiliser TextDecoder puis réencoder en base64
+        const decoder = new TextDecoder('utf-8');
+        const csvText = decoder.decode(arrayBuffer);
+        console.log(
+            '📄 CSV text decoded (UTF-8):',
+            csvText.substring(0, 200) + '...',
+        );
+
+        // Convertir le texte UTF-8 en base64 de manière sûre
+        const encoder = new TextEncoder();
+        const utf8Bytes = encoder.encode(csvText);
+
+        // Convertir les bytes UTF-8 en string binaire puis base64
         let binaryString = '';
-        for (let i = 0; i < bytes.length; i++) {
-            binaryString += String.fromCharCode(bytes[i]);
+        for (let i = 0; i < utf8Bytes.length; i++) {
+            binaryString += String.fromCharCode(utf8Bytes[i]);
         }
         const base64Data = btoa(binaryString);
-        const dataUrl = `data:${blob.type || 'text/csv'};base64,${base64Data}`;
+
+        // Créer le data URL avec le charset UTF-8 explicite
+        const dataUrl = `data:${
+            blob.type || 'text/csv'
+        };charset=utf-8;base64,${base64Data}`;
 
         console.log('🔗 Data URL created, length:', dataUrl.length);
 

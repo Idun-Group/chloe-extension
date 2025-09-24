@@ -45,6 +45,7 @@ export default function displaySettingsPage(container: HTMLElement) {
                                         ? response.profile.profileList
                                               .map(
                                                   (list: {
+                                                      id: string;
                                                       name: string;
                                                       type:
                                                           | 'PEOPLE'
@@ -52,7 +53,9 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                       peopleProfiles: any[];
                                                       organizationProfiles: any[];
                                                   }) => `
-                                            <li class="chloe-extension__body__my-lists__container__item">
+                                            <li class="chloe-extension__body__my-lists__container__item profile-list-item" data-list-id="${
+                                                list.id
+                                            }">
                                                 <p>
                                                     <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
                                                     ${list.name} | ${
@@ -62,12 +65,20 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                       }[list.type]
                                                   }
                                                 </p>
+                                                
+                                                <div>
+                                                    <button class="download-list-button action-btn" data-list-name="${
+                                                        list.name
+                                                    }">
+                                                        <img src="${imgBaseUrl}/icons/export.png" class="icon" alt="export icon"/>
+                                                    </button>
 
-                                                <button class="go-to-list-button action-btn" data-list-name="${
-                                                    list.name
-                                                }">
-                                                    <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="edit icon"/>
-                                                </button>
+                                                    <button class="go-to-list-button action-btn" data-list-name="${
+                                                        list.name
+                                                    }">
+                                                        <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="Go To icon"/>
+                                                    </button>
+                                                </div>
                                             </li>
                                         `,
                                               )
@@ -134,6 +145,29 @@ export default function displaySettingsPage(container: HTMLElement) {
 
                     createContextButton?.addEventListener('click', () => {
                         displayCreateContextModal();
+                    });
+
+                    const profileListItems =
+                        document.querySelectorAll('.profile-list-item');
+
+                    profileListItems.forEach((item) => {
+                        item.querySelector(
+                            '.download-list-button',
+                        )?.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const listId = item.getAttribute('data-list-id');
+                            console.log('Download list:', listId);
+                            chrome.runtime.sendMessage(
+                                {
+                                    action: 'DOWNLOAD_PROFILE_LIST',
+                                    data: { id: listId },
+                                },
+                                (response) => {
+                                    console.log('Download response:', response);
+                                },
+                            );
+                            // Ici, tu peux ajouter le code pour gérer le téléchargement de la liste
+                        });
                     });
 
                     const contextItems = document.querySelectorAll(

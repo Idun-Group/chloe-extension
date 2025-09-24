@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Post } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { access } from 'fs';
 import { UserService } from 'src/user/user.service';
@@ -59,4 +59,5 @@ export class AuthController {
 
         return { access_token: accessToken, refresh_token: refreshToken };
     }
+
 }

@@ -18,6 +18,7 @@ import { PeopleProfileController } from './people-profile/people-profile.control
 import { PeopleProfileModule } from './people-profile/people-profile.module';
 import { ProfileListModule } from './profile-list/profile-list.module';
 import { OrganizationProfileModule } from './organization-profile/organization-profile.module';
+import { DataConverterModule } from './data-converter/data-converter.module';
 
 @Module({
     imports: [
@@ -42,6 +43,7 @@ import { OrganizationProfileModule } from './organization-profile/organization-p
         PeopleProfileModule,
         ProfileListModule,
         OrganizationProfileModule,
+        DataConverterModule,
     ],
     controllers: [
         AppController,

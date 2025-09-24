@@ -86,6 +86,15 @@ export class ProfileListService {
         try {
             const list = await this.prisma.profileList.findUnique({
                 where: { id },
+                select: {
+                    id: true,
+                    name: true,
+                    description: true,
+                    type: true,
+                    ownerId: true,
+                    peopleProfiles: true,
+                    organizationProfiles: true,
+                },
             });
             return list;
         } catch (error) {

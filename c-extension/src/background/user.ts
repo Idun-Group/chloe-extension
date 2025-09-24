@@ -5,7 +5,7 @@ export default async function getUserProfile() {
         const token = await getToken();
 
         if (!token) throw new Error('No token available');
-        const response = await fetch('http://localhost:3000/user/me', {
+        const response = await fetch('http://localhost:8000/user/me', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -1,20 +1,24 @@
 import { Injectable } from '@nestjs/common';
+import { stringify } from 'csv-stringify';
 
 @Injectable()
 export class DataConverterService {
-    listToCSV<T extends Record<string, any>>(data: T[]): string {
-        if (data.length === 0) return '';
-
-        // Récupère les clés (en-têtes)
-        const headers = Object.keys(data[0]).join(',');
-
-        // Génère les lignes
-        const rows = data.map((row) =>
-            Object.values(row)
-                .map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`) // échappe guillemets + null/undefined
-                .join(','),
-        );
-
-        return [headers, ...rows].join('\n');
+    listToCSV<T extends Record<string, any>>(data: T[]): Promise<string> {
+        return new Promise((resolve, reject) => {
+            stringify(
+                data,
+                {
+                    header: true, // Ajoute automatiquement les noms des colonnes
+                    delimiter: ',', // Séparateur virgule
+                    quoted: true, // Met les valeurs entre guillemets si nécessaire
+                },
+                (err, output) => {
+                    if (err) {
+                        return reject(err);
+                    }
+                    resolve(output);
+                },
+            );
+        });
     }
 }

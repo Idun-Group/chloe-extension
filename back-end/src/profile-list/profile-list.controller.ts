@@ -8,6 +8,7 @@ import {
     Put,
     Query,
     Req,
+    Res,
     StreamableFile,
     UseGuards,
 } from '@nestjs/common';
@@ -134,6 +135,29 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('/test-csv')
+    async testCsv() {
+        console.log('🧪 Test CSV endpoint called');
+        const testData = [
+            { id: '1', name: 'Test User', email: 'test@example.com' },
+            { id: '2', name: 'Another User', email: 'another@example.com' },
+        ];
+
+        try {
+            const csvData = await this.dataConverterService.listToCSV(testData);
+            console.log('✅ Test CSV generated:', csvData.length, 'characters');
+
+            return new StreamableFile(Buffer.from(csvData), {
+                type: 'text/csv; charset=utf-8',
+                disposition: 'attachment; filename="test.csv"',
+            });
+        } catch (error) {
+            console.error('💥 Test CSV error:', error);
+            throw new HttpException('Test CSV failed', 500);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get('/csv/:id')
     async exportProfileListToCsv(
         @Param('id') id: string,
@@ -142,39 +166,64 @@ export class ProfileListController {
     ) {
         try {
             const userId = req.user.id;
+            console.log('🔍 Exporting CSV for list:', id, 'user:', userId);
+
             const profileList =
                 await this.profileListService.getProfileListById(id);
 
             if (!profileList) {
+                console.log('❌ Profile list not found:', id);
                 throw new HttpException('Profile list not found', 404);
             }
 
             if (profileList.ownerId !== userId) {
+                console.log(
+                    '❌ Unauthorized access. Owner:',
+                    profileList.ownerId,
+                    'User:',
+                    userId,
+                );
                 throw new HttpException(
                     'Unauthorized access to this profile list',
                     403,
                 );
             }
 
+            console.log(
+                '✅ Profile list found:',
+                profileList.name,
+                'type:',
+                profileList.type,
+            );
+
             let dataToConvert: Record<string, any>[] = [];
 
             if (profileList.type === 'PEOPLE') {
+                console.log(
+                    '📊 Processing PEOPLE profiles:',
+                    profileList.peopleProfiles?.length || 0,
+                );
                 // Normalize people profiles data for CSV export
-                dataToConvert = profileList.peopleProfiles.map((profile) => ({
-                    id: profile.id,
-                    linkedinUrl: profile.linkedinUrl,
-                    fullName: profile.fullName,
-                    job: profile.job || '',
-                    location: profile.location,
-                    phone: profile.phone || '',
-                    email: profile.email || '',
-                    createdAt: profile.createdAt,
-                    updatedAt: profile.updatedAt,
-                }));
+                dataToConvert =
+                    profileList.peopleProfiles?.map((profile) => ({
+                        id: profile.id,
+                        linkedinUrl: profile.linkedinUrl,
+                        fullName: profile.fullName,
+                        job: profile.job || '',
+                        location: profile.location,
+                        phone: profile.phone || '',
+                        email: profile.email || '',
+                        createdAt: profile.createdAt,
+                        updatedAt: profile.updatedAt,
+                    })) || [];
             } else {
+                console.log(
+                    '🏢 Processing ORGANIZATION profiles:',
+                    profileList.organizationProfiles?.length || 0,
+                );
                 // Normalize organization profiles data for CSV export
-                dataToConvert = profileList.organizationProfiles.map(
-                    (profile) => ({
+                dataToConvert =
+                    profileList.organizationProfiles?.map((profile) => ({
                         id: profile.id,
                         linkedinUrl: profile.linkedinUrl,
                         name: profile.name,
@@ -182,17 +231,39 @@ export class ProfileListController {
                         industry: profile.industry || '',
                         size: profile.size || '',
                         updatedAt: profile.updatedAt,
-                    }),
+                    })) || [];
+            }
+
+            console.log('🔄 Data to convert:', dataToConvert.length, 'items');
+
+            // Pour les listes vides, créer un array vide - csv-stringify s'occupera des headers
+            if (dataToConvert.length === 0) {
+                console.log(
+                    '⚠️ No data to convert, but will generate CSV with headers only',
                 );
             }
 
-            const csvData = this.dataConverterService.listToCSV(dataToConvert);
+            console.log('⏳ Generating CSV...');
+            const csvData =
+                await this.dataConverterService.listToCSV(dataToConvert);
+            console.log(
+                '✅ CSV generated successfully, length:',
+                csvData.length,
+            );
 
             return new StreamableFile(Buffer.from(csvData), {
-                type: 'text/csv',
+                type: 'text/csv; charset=utf-8',
+                disposition: `attachment; filename="${profileList.name.split(' ').join('_')}.csv"`,
             });
         } catch (error) {
-            throw new Error(`Failed to export profile list to CSV: ${error}`);
+            console.error('💥 CSV export error:', error);
+            if (error instanceof HttpException) {
+                throw error;
+            }
+            throw new HttpException(
+                `Failed to export profile list to CSV: ${error.message}`,
+                500,
+            );
         }
     }
 }

@@ -10,7 +10,7 @@ export async function createAIContext(
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch('http://localhost:3000/aicontext', {
+    const response = await fetch('http://localhost:8000/aicontext', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export async function getAIContextById(id: string) {
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:3000/aicontext/${id}`, {
+    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
         method: 'GET',
         headers: {
             Authorization: `Bearer ${token.access_token}`,
@@ -73,7 +73,7 @@ export async function updateAIContext(
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:3000/aicontext/${id}`, {
+    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
         method: 'PUT',
         headers: {
             'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export async function deleteAIContext(id: string) {
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:3000/aicontext/${id}`, {
+    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
         method: 'delete',
         headers: {
             Authorization: `Bearer ${token.access_token}`,

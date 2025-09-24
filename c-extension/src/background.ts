@@ -17,6 +17,7 @@ import {
     createPeopleProfile,
     createProfileList,
     deleteProfileList,
+    downloadProfileList,
     fetchProfileLists,
     getProfileListById,
     getProfileListsByType,
@@ -155,6 +156,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                           data.organization,
                       );
             sendResponse(result);
+        }
+
+        if (request.action === 'DOWNLOAD_PROFILE_LIST') {
+            const { id } = request.data;
+
+            try {
+                await downloadProfileList(id);
+                sendResponse({ success: true, message: 'Download started' });
+            } catch (error) {
+                console.error('Download failed:', error);
+                sendResponse({
+                    success: false,
+                    error:
+                        error instanceof Error
+                            ? error.message
+                            : 'Unknown error',
+                });
+            }
         }
     })();
     return true;

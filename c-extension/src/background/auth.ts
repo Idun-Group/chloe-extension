@@ -28,7 +28,7 @@ export async function signinWithLinkedin() {
     if (!code) throw new Error('No code in callback');
     if (returnedState !== STATE) throw new Error('State mismatch');
 
-    const res = await fetch('http://localhost:3000/auth/login', {
+    const res = await fetch('http://localhost:8000/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ code }),

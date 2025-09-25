@@ -23,8 +23,22 @@ model User {
   imageUrl   String
   createAt   DateTime    @default(now())
   updateAt   DateTime    @default(now())
+  refreshToken RefreshToken[]
   aiContext  AIContext[]
   profileList ProfileList[]
+}
+
+model RefreshToken {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  tokenHash  String   // hash du refresh token (jamais stocker en clair)
+  createdAt  DateTime @default(now())
+  expiresAt  DateTime
+
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([tokenHash])
 }
 
 model ProfileList {
@@ -63,6 +77,7 @@ model OrganizationProfile {
   profileList ProfileList @relation(fields: [profileListId], references: [id])
   updatedAt   DateTime @default(now())
 }
+
 
 model AIContext {
   id      String  @id @default(auto()) @map("_id") @db.ObjectId

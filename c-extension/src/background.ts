@@ -21,6 +21,7 @@ import {
     fetchProfileLists,
     getProfileListById,
     getProfileListsByType,
+    lazyFetchProfileLists,
     updateProfileList,
 } from './background/profil-list';
 
@@ -121,6 +122,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             sendResponse(result);
         }
 
+        if (request.action === 'GET_LAZY_ALL_PROFILE_LISTS') {
+            const result = await lazyFetchProfileLists();
+            sendResponse({ profileLists: result });
+        }
         if (request.action === 'GET_PROFILELIST_BY_ID') {
             const { id } = request.data;
             const result = await getProfileListById(id);

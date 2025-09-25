@@ -18,7 +18,7 @@ const globalNav = document.querySelector<HTMLElement>('.global-nav');
 const container = document.createElement('div');
 container.id = 'chloe-extension-root'; // <— ID unique
 container.innerHTML = `
-    <button type="button" id="chloe-floating-btn" style="top: ${
+    <button type="button" id="chloe-floating-btn retractedls" style="top: ${
         globalNav ? globalNav.offsetHeight + 24 : 70 + 25
     }px"> <img class="chloe-floating-btn__icon" src="${chrome.runtime.getURL(
     'public/assets/images',

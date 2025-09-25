@@ -45,6 +45,20 @@ export class ProfileListService {
         }
     }
 
+    async getLazyProfileListsByOwner(ownerId: string) {
+        try {
+            const lists = await this.prisma.profileList.findMany({
+                where: { ownerId },
+                select: {
+                    id: true,
+                },
+            });
+            return lists;
+        } catch (error) {
+            throw new Error(`Failed to retrieve profile lists: ${error}`);
+        }
+    }
+
     async getProfileListsByType(ownerId: string, type: ListType) {
         try {
             const lists = await this.prisma.profileList.findMany({

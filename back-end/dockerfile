@@ -13,8 +13,6 @@ CMD [ "npm", "run", "start:dev" ]
 
 FROM base AS build
 RUN npm run build
-RUN npx prisma db push
-RUN npx prisma generate
 
 FROM base AS production
 CMD [ "npm", "run", "start:prod" ]

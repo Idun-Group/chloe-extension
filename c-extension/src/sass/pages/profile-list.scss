@@ -1,0 +1,89 @@
+@import '../abstract/variables.scss';
+.chloe-extension__list {
+    // Faire en sorte que le conteneur prenne toute la hauteur disponible
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-shrink: 0; // Empêche l'en-tête de se rétrécir
+
+        &__type {
+            font-size: 14px;
+            color: gray;
+            margin-left: 8px;
+        }
+
+        &__button {
+            background-color: $black !important;
+            color: white !important;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            &:hover {
+                background-color: lighten($black, 10%) !important;
+            }
+        }
+    }
+
+    // Conteneur pour la table avec scroll
+    &__table-container {
+        flex: 1; // Prendre tout l'espace restant disponible
+        overflow: auto; // Ajouter scroll si le contenu dépasse
+        margin-top: 16px;
+        border: 1px solid $grey-light; // Bordure autour du conteneur
+    }
+
+    &__table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 0; // Enlever la marge maintenant qu'elle est sur le conteneur
+
+        th,
+        td {
+            border: 1px solid $grey-light;
+            padding: 8px;
+            text-align: left;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: $white-smoke;
+            position: sticky; // Faire en sorte que l'en-tête reste visible lors du scroll
+            top: 0;
+            z-index: 1;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: $white-smoke;
+        }
+    }
+
+    &__pagination {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 16px;
+        gap: 8px;
+        flex-shrink: 0; // Empêche la pagination de se rétrécir
+
+        button {
+            background-color: transparent !important;
+            color: $black !important;
+            border: none !important;
+
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 24px;
+            &:hover {
+                background-color: $white-smoke;
+            }
+        }
+    }
+}

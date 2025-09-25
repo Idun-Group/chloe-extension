@@ -62,6 +62,21 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
+    @Get('lazy')
+    async getLazyProfileLists(@Req() req) {
+        try {
+            const userId = req.user.id;
+            const lists =
+                await this.profileListService.getLazyProfileListsByOwner(
+                    userId,
+                );
+            return lists;
+        } catch (error) {
+            throw new Error(`Failed to retrieve profile list: ${error}`);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
     @Get()
     async getProfileLists(@Req() req) {
         try {
@@ -159,11 +174,7 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/csv/:id')
-    async exportProfileListToCsv(
-        @Param('id') id: string,
-        @Req() req,
-        @Query('type') type: ListType,
-    ) {
+    async exportProfileListToCsv(@Param('id') id: string, @Req() req) {
         try {
             const userId = req.user.id;
             console.log('🔍 Exporting CSV for list:', id, 'user:', userId);

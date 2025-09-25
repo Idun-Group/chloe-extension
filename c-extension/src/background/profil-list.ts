@@ -46,6 +46,29 @@ export async function getProfileListById(id: string) {
     return response.json();
 }
 
+export async function lazyFetchProfileLists() {
+    const token = await getToken();
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    const response = await fetch('http://localhost:8000/profile-list/lazy', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token.access_token}`,
+        },
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to fetch lazy profile lists: ${response.statusText}`,
+        );
+    }
+
+    return response.json();
+}
+
 export async function getProfileListsByType(type: 'PEOPLE' | 'ORGANISATION') {
     const token = await getToken();
 

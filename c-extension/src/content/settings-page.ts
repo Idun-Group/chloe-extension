@@ -1,4 +1,5 @@
 import { displayCreateContextModal, displayCreateListModal } from './modal';
+import { displayListPage } from './profile-list-tab';
 
 export default function displaySettingsPage(container: HTMLElement) {
     console.log('Displaying Settings Page');
@@ -151,22 +152,37 @@ export default function displaySettingsPage(container: HTMLElement) {
                         document.querySelectorAll('.profile-list-item');
 
                     profileListItems.forEach((item) => {
+                        const listId = item.getAttribute('data-list-id');
+
                         item.querySelector(
                             '.download-list-button',
                         )?.addEventListener('click', (e) => {
                             e.stopPropagation();
-                            const listId = item.getAttribute('data-list-id');
-                            console.log('Download list:', listId);
+                            // Récupérer l'ID directement depuis l'élément parent pour éviter le problème de closure
+                            const currentListId = (e.target as HTMLElement)
+                                .closest('.profile-list-item')
+                                ?.getAttribute('data-list-id');
+                            console.log('Download list:', currentListId);
                             chrome.runtime.sendMessage(
                                 {
                                     action: 'DOWNLOAD_PROFILE_LIST',
-                                    data: { id: listId },
+                                    data: { id: currentListId },
                                 },
                                 (response) => {
                                     console.log('Download response:', response);
                                 },
                             );
-                            // Ici, tu peux ajouter le code pour gérer le téléchargement de la liste
+                        });
+
+                        item.querySelector(
+                            '.go-to-list-button',
+                        )?.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            // Même correction pour le bouton "go-to-list"
+                            const currentListId = (e.target as HTMLElement)
+                                .closest('.profile-list-item')
+                                ?.getAttribute('data-list-id');
+                            displayListPage(currentListId!);
                         });
                     });
 

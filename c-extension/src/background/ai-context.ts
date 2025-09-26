@@ -1,11 +1,11 @@
-import { getToken } from './auth';
+import { getValidAccessToken } from './auth';
 
 export async function createAIContext(
     title: string,
     content: string,
     isDefault: boolean,
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     if (!token) {
         return { ok: false, message: 'No auth token found' };
     }
@@ -36,7 +36,7 @@ export async function createAIContext(
 }
 
 export async function getAIContextById(id: string) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         return { ok: false, message: 'No auth token found' };
@@ -68,7 +68,7 @@ export async function updateAIContext(
     content: string,
     isDefault: boolean,
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     if (!token) {
         return { ok: false, message: 'No auth token found' };
     }
@@ -98,7 +98,7 @@ export async function updateAIContext(
 }
 
 export async function deleteAIContext(id: string) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     if (!token) {
         return { ok: false, message: 'No auth token found' };
     }

@@ -1,8 +1,8 @@
-import { getToken } from './auth';
+import { getValidAccessToken } from './auth';
 import { readyTabs } from './current-pages';
 
 export async function fetchProfileLists() {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -25,7 +25,7 @@ export async function fetchProfileLists() {
 }
 
 export async function getProfileListById(id: string) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -47,7 +47,7 @@ export async function getProfileListById(id: string) {
 }
 
 export async function lazyFetchProfileLists() {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     if (!token) {
         throw new Error('No token found');
     }
@@ -70,7 +70,7 @@ export async function lazyFetchProfileLists() {
 }
 
 export async function getProfileListsByType(type: 'PEOPLE' | 'ORGANISATION') {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -101,7 +101,7 @@ export async function createProfileList(
     name: string,
     description: string,
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -135,7 +135,7 @@ export async function updateProfileList(
     description: string,
     type: 'PEOPLE' | 'ORGANIZATION',
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -164,7 +164,7 @@ export async function updateProfileList(
 }
 
 export async function deleteProfileList(id: string) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     if (!token) {
         throw new Error('No token found');
     }
@@ -197,7 +197,7 @@ export async function createPeopleProfile(
         email?: string;
     },
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');
@@ -236,7 +236,7 @@ export async function createOrganizationProfile(
         size?: string;
     },
 ) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
     profileData;
     if (!token) {
         throw new Error('No token found');
@@ -272,7 +272,7 @@ function getFilenameFromCD(cd?: string | null, fallback = 'export.csv') {
 }
 
 export async function downloadProfileList(id: string) {
-    const token = await getToken();
+    const token = await getValidAccessToken();
 
     if (!token) {
         throw new Error('No token found');

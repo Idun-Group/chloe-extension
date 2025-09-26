@@ -1,4 +1,4 @@
-import { getToken, signinWithLinkedin } from './background/auth';
+import { getValidAccessToken, signinWithLinkedin } from './background/auth';
 import {
     handleNav,
     lastByTab,
@@ -47,7 +47,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         if (request.action === 'GET_TOKEN') {
             try {
-                const token = await getToken();
+                const token = await getValidAccessToken();
                 console.log('GET_TOKEN token :', token);
                 sendResponse({
                     status: token ? 'connected' : 'disconnected',

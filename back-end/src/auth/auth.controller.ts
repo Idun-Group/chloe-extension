@@ -4,12 +4,15 @@ import {
     Controller,
     Get,
     Post,
+    Req,
+    Res,
     UnauthorizedException,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config/dist/config.service';
+import type { Request, Response } from 'express';
 
 class LinkedinTokenDTO {
     code!: string;
@@ -28,7 +31,8 @@ export class AuthController {
     @Post('login')
     async login(
         @Body() body: LinkedinTokenDTO,
-    ): Promise<{ access_token: string; refresh_token: string }> {
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<{ access_token: string; access_token_expire_in: number }> {
         const token = await this.auth.getAccessTokenFromCode(body.code);
 
         const userInfo = await this.auth.getUserInfo(token.access_token);
@@ -66,32 +70,38 @@ export class AuthController {
 
         await this.authService.storeRefreshToken(user.id, refreshToken);
 
-        return { access_token: accessToken, refresh_token: refreshToken };
+        res.cookie('refresh_token', refreshToken, {
+            httpOnly: true,
+            secure: this.config.get<string>('NODE_ENV') === 'production',
+            sameSite: 'lax',
+            maxAge: 30 * 24 * 60 * 60 * 1000,
+        });
+
+        return { access_token: accessToken, access_token_expire_in: 900 };
     }
 
     @Post('refresh')
-    async refresh(@Body() body: { refresh_token: string }) {
-        if (!body.refresh_token) {
+    async refresh(@Req() req: Request) {
+        const refreshToken = req.cookies['refresh_token'];
+
+        if (!refreshToken) {
             throw new BadRequestException('Refresh token is required');
         }
 
-        const payload = this.jwtService.verify(body.refresh_token);
+        const payload = this.jwtService.verify(refreshToken);
 
         if (payload.type !== 'refresh') {
             throw new UnauthorizedException('Invalid token type');
         }
 
-        await this.authService.assertRefreshValid(
-            payload.id,
-            body.refresh_token,
-        );
+        await this.authService.assertRefreshValid(payload.id, refreshToken);
 
         const newAccess = this.jwtService.sign(
             { id: payload.id, type: 'access' },
             { expiresIn: this.config.get<string>('JWT_ACCESS_EXPIRATION') },
         );
 
-        return { access_token: newAccess };
+        return { access_token: newAccess, access_token_expire_in: 900 };
     }
 
     @Post('logout')

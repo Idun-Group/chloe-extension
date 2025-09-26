@@ -132,6 +132,8 @@ export default function displaySettingsPage(container: HTMLElement) {
                                 Lancer une recherche approfondie
                             </button>
                         </div>
+
+                        <button id="logout-btn"> Logout </button>
                     `;
 
                     const createListButton =

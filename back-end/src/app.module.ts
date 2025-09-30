@@ -19,6 +19,7 @@ import { PeopleProfileModule } from './people-profile/people-profile.module';
 import { ProfileListModule } from './profile-list/profile-list.module';
 import { OrganizationProfileModule } from './organization-profile/organization-profile.module';
 import { DataConverterModule } from './data-converter/data-converter.module';
+import { ChloeApiModule } from './chloe-api/chloe-api.module';
 
 @Module({
     imports: [
@@ -28,13 +29,19 @@ import { DataConverterModule } from './data-converter/data-converter.module';
             envFilePath: '.env',
             validationSchema: Joi.object({
                 PORT: Joi.number().default(3000),
+
                 LINKEDIN_CLIENT_ID: Joi.string().required(),
                 LINKEDIN_CLIENT_SECRET: Joi.string().required(),
                 LINKEDIN_REDIRECT_URI: Joi.string().required(),
+
                 DATABASE_URL: Joi.string().required(),
+
                 JWT_SECRET: Joi.string().default('super-secret'),
                 JWT_ACCESS_EXPIRATION: Joi.string().default('15m'),
                 JWT_REFRESH_EXPIRATION: Joi.string().default('30d'),
+
+                CHLOE_API_SECRET_KEY: Joi.string().required(),
+                CHLOE_API_URL: Joi.string().required(),
             }),
         }),
         PrismaModule,
@@ -44,6 +51,7 @@ import { DataConverterModule } from './data-converter/data-converter.module';
         ProfileListModule,
         OrganizationProfileModule,
         DataConverterModule,
+        ChloeApiModule,
     ],
     controllers: [
         AppController,

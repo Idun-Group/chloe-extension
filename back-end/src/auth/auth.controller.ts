@@ -54,6 +54,7 @@ export class AuthController {
         const accessToken = this.jwtService.sign(
             {
                 id: user.id,
+                email: user.email,
                 type: 'access',
             },
 
@@ -63,6 +64,7 @@ export class AuthController {
         const refreshToken = this.jwtService.sign(
             {
                 id: user.id,
+                email: user.email,
                 type: 'refresh',
             },
             { expiresIn: this.config.get<string>('JWT_REFRESH_EXPIRATION') },
@@ -97,7 +99,7 @@ export class AuthController {
         await this.authService.assertRefreshValid(payload.id, refreshToken);
 
         const newAccess = this.jwtService.sign(
-            { id: payload.id, type: 'access' },
+            { id: payload.id, email: payload.email, type: 'access' },
             { expiresIn: this.config.get<string>('JWT_ACCESS_EXPIRATION') },
         );
 

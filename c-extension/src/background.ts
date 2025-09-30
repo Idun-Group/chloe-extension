@@ -22,8 +22,10 @@ import {
     getProfileListById,
     getProfileListsByType,
     lazyFetchProfileLists,
+    registerProfileInHistory,
     updateProfileList,
 } from './background/profil-list';
+import { getProfileEmailByLinkedInUrl } from './background/chloe-api';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -178,6 +180,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                             ? error.message
                             : 'Unknown error',
                 });
+            }
+        }
+
+        if (request.action === 'GET_PROFILE_EMAIL') {
+            const { linkedinUrl } = request.data;
+            try {
+                const token = await getValidAccessToken();
+                if (!token) throw new Error('No token available');
+
+                const email = await getProfileEmailByLinkedInUrl(linkedinUrl);
+                sendResponse({ status: 'success', email });
+            } catch (error) {
+                console.error('Error getting token:', error);
+                sendResponse({ status: 'error', error });
+                return;
+            }
+        }
+
+        if (request.action === 'REGISTER_PROFILE_IN_HISTORY') {
+            const { url } = request;
+            try {
+                await registerProfileInHistory(url);
+                sendResponse({ status: 'success' });
+            } catch (error) {
+                console.error('Error registering profile in history:', error);
+                sendResponse({ status: 'error', error });
             }
         }
     })();

@@ -1,3 +1,4 @@
+import cleanLinkedInUrl from '../lib/url-cleaner';
 import { getValidAccessToken } from './auth';
 import { readyTabs } from './current-pages';
 
@@ -366,4 +367,40 @@ export async function downloadProfileList(id: string) {
         console.error('💥 Download failed:', error);
         throw error;
     }
+}
+
+export async function registerProfileInHistory(url: string) {
+    const token = await getValidAccessToken();
+
+    if (!token) {
+        throw new Error('No token found');
+    }
+
+    const urlParams = new URLSearchParams({
+        linkedinUrl: cleanLinkedInUrl(url),
+    });
+    const response = await fetch(
+        'http://localhost:8000/profile-list/history/register?' +
+            urlParams.toString(),
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({ linkedinUrl: url }),
+        },
+    );
+
+    if (!response.ok) {
+        throw new Error(
+            `Failed to register profile in history: ${response.statusText}`,
+        );
+    }
+
+    const data = await response.json();
+
+    console.log('Profile registered in history:', data);
+
+    return data;
 }

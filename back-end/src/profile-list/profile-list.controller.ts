@@ -218,8 +218,8 @@ export class ProfileListController {
                 dataToConvert =
                     profileList.peopleProfiles?.map((profile) => ({
                         'linkedin de la cible': profile.linkedinUrl,
-                        nom: profile.fullName.split(' ')[0],
-                        prénom: profile.fullName.split(' ')[1] || '',
+                        nom: profile.fullName?.split(' ')[0],
+                        prénom: profile.fullName?.split(' ')[1] || '',
                         "rôle de l'entreprise": profile.job || '',
                         localisation: profile.location,
                         téléphone: profile.phone || '',
@@ -281,6 +281,30 @@ export class ProfileListController {
             }
             throw new HttpException(
                 `Failed to export profile list to CSV: ${error.message}`,
+                500,
+            );
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/history/register')
+    async registerProfileInHistory(
+        @Query('linkedinUrl') linkedinUrl: string,
+        @Req() req: any,
+    ) {
+        const ownerId = req.user.id;
+
+        const result = await this.profileListService.registerProfileInHistory(
+            linkedinUrl,
+            ownerId,
+        );
+
+        if (result) {
+            console.log('Profile registered in history:', result);
+            return { message: 'Profile registered in history successfully.' };
+        } else {
+            throw new HttpException(
+                'Failed to register profile in history.',
                 500,
             );
         }

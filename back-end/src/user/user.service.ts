@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { ListType } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -27,6 +28,14 @@ export class UserService {
                     linkedinToken,
                     fullName,
                     imageUrl,
+                    profileList: {
+                        create: {
+                            name: 'Default History List',
+                            description:
+                                'List that contains all your previously analyzed profiles',
+                            type: ListType.HISTORY,
+                        },
+                    },
                 },
                 select: {
                     id: true,
@@ -42,7 +51,7 @@ export class UserService {
         }
     }
 
-    async findByLinkedinId(id: string) {
+    async findById(id: string) {
         try {
             const user = await this.prisma.user.findUnique({
                 where: { id },
@@ -61,6 +70,9 @@ export class UserService {
                         },
                     },
                     profileList: {
+                        where: {
+                            type: { not: ListType.HISTORY },
+                        },
                         select: {
                             id: true,
                             name: true,

@@ -17,6 +17,6 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
         if (payload.type !== 'access') {
             return null; // Seuls les access tokens sont valides pour l'authentification
         }
-        return { id: payload.id,email: payload.email, type: payload.type };
+        return { id: payload.id, email: payload.email, type: payload.type };
     }
 }

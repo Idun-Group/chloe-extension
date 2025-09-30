@@ -27,5 +27,4 @@ export class PeopleProfileController {
             throw new Error(`Failed to create people profile: ${error}`);
         }
     }
-    
 }

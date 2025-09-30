@@ -119,16 +119,12 @@ export class ProfileListService {
     }
 
     async registerProfileInHistory(linkedinUrl: string, ownerId: string) {
-        console.log(
-            'Registering URL in history:',
-            linkedinUrl,
-            'for owner:',
-            ownerId,
-        );
         try {
             const historyList = await this.prisma.profileList.findFirst({
                 where: { type: ListType.HISTORY, ownerId },
             });
+
+            console.log('History List:', historyList);
 
             if (!historyList) {
                 throw new Error('History list not found');
@@ -142,16 +138,24 @@ export class ProfileListService {
                             linkedinUrl,
                         },
                     });
+                console.log('Existing Profile:', checkExistingProfile);
 
                 if (checkExistingProfile) {
+                    console.log(
+                        'Profile already in history:',
+                        checkExistingProfile,
+                    );
                     return checkExistingProfile;
                 } else {
+                    console.log('Creating new profile in history');
                     const newProfile = await this.prisma.peopleProfile.create({
                         data: {
                             linkedinUrl,
                             profileList: { connect: { id: historyList.id } },
                         },
                     });
+
+                    return newProfile;
                 }
             } else if (
                 linkedinUrl.includes('linkedin.com/company/') ||
@@ -177,6 +181,8 @@ export class ProfileListService {
                                 },
                             },
                         });
+
+                    return newProfile;
                 }
             }
         } catch (error) {

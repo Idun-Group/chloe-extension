@@ -8,6 +8,7 @@ services:
         ports:
             - '8000:8000'
             - '5555:5555' # Port pour le debugger
+            - '4000:4000' # Port pour le service de chat
         environment:
             - NODE_ENV=development
             - PORT=8000

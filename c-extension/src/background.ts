@@ -25,7 +25,10 @@ import {
     registerProfileInHistory,
     updateProfileList,
 } from './background/profil-list';
-import { getProfileEmailByLinkedInUrl } from './background/chloe-api';
+import {
+    getProfileEmailByLinkedInUrl,
+    getProfilePhoneByLinkedInUrl,
+} from './background/chloe-api';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -198,16 +201,31 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             }
         }
 
+        if (request.action === 'GET_PROFILE_PHONE') {
+            const { linkedinUrl } = request.data;
+            try {
+                const token = await getValidAccessToken();
+                if (!token) throw new Error('No token available');
+                const phone = await getProfilePhoneByLinkedInUrl(linkedinUrl);
+                sendResponse({ status: 'success', phone });
+            } catch (error) {
+                console.error('Error getting token:', error);
+                sendResponse({ status: 'error', error });
+                return;
+            }
+        }
+
         if (request.action === 'REGISTER_PROFILE_IN_HISTORY') {
             const { url } = request;
             try {
-                await registerProfileInHistory(url);
-                sendResponse({ status: 'success' });
+                const profile = await registerProfileInHistory(url);
+                sendResponse({ status: 'success', profile });
             } catch (error) {
                 console.error('Error registering profile in history:', error);
                 sendResponse({ status: 'error', error });
             }
         }
     })();
+
     return true;
 });

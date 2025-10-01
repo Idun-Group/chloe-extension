@@ -189,4 +189,68 @@ export class ProfileListService {
             throw new Error(`Failed to register profile in history: ${error}`);
         }
     }
+
+    async registerProfileEmail(data: {
+        email: string;
+        linkedinUrl: string;
+        userId: string;
+    }) {
+        try {
+            const profilesList = await this.prisma.profileList.findMany({
+                where: { ownerId: data.userId },
+            });
+
+            profilesList.forEach(async (profiles) => {
+                await this.prisma.peopleProfile.updateMany({
+                    where: {
+                        profileListId: profiles.id,
+                        linkedinUrl: data.linkedinUrl,
+                    },
+                    data: { email: data.email },
+                });
+
+                await this.prisma.organizationProfile.updateMany({
+                    where: {
+                        profileListId: profiles.id,
+                        linkedinUrl: data.linkedinUrl,
+                    },
+                    data: { email: data.email },
+                });
+            });
+        } catch (error) {
+            throw new Error(`Failed to register profile email: ${error}`);
+        }
+    }
+
+    async registerProfilePhone(data: {
+        phone: string;
+        linkedinUrl: string;
+        userId: string;
+    }) {
+        try {
+            const profilesList = await this.prisma.profileList.findMany({
+                where: { ownerId: data.userId },
+            });
+
+            profilesList.forEach(async (profiles) => {
+                await this.prisma.peopleProfile.updateMany({
+                    where: {
+                        profileListId: profiles.id,
+                        linkedinUrl: data.linkedinUrl,
+                    },
+                    data: { phone: data.phone },
+                });
+
+                await this.prisma.organizationProfile.updateMany({
+                    where: {
+                        profileListId: profiles.id,
+                        linkedinUrl: data.linkedinUrl,
+                    },
+                    data: { phone: data.phone },
+                });
+            });
+        } catch (error) {
+            throw new Error(`Failed to register profile phone: ${error}`);
+        }
+    }
 }

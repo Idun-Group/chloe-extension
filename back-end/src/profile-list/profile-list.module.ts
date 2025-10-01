@@ -9,5 +9,6 @@ import { DataConverterService } from 'src/data-converter/data-converter.service'
     imports: [PrismaModule, DataConverterModule],
     providers: [ProfileListService, DataConverterService],
     controllers: [ProfileListController],
+    exports: [ProfileListService],
 })
 export class ProfileListModule {}

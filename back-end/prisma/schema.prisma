@@ -73,6 +73,8 @@ model OrganizationProfile {
   location    String?
   industry    String?
   size        String?
+  email       String?
+  phone       String?
   profileListId String   @db.ObjectId
   profileList ProfileList @relation(fields: [profileListId], references: [id])
   updatedAt   DateTime @default(now())

@@ -1,0 +1,102 @@
+{
+    "uuid": "9a70443c-dcbc-43a2-830a-d1b816404a1a",
+    "lastMigration": 33,
+    "name": "Chloe",
+    "endpointPrefix": "",
+    "latency": 0,
+    "port": 4000,
+    "hostname": "",
+    "folders": [],
+    "routes": [
+        {
+            "uuid": "4e1cb7ba-3803-4c81-b38a-0d93d4bc98e9",
+            "type": "http",
+            "documentation": "",
+            "method": "get",
+            "endpoint": "",
+            "responses": [
+                {
+                    "uuid": "b1080f18-4c3c-480a-b103-7222be33614b",
+                    "body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"call_id\": \"cd2261c1-541b-4dca-be61-5130d009e21b\",\n        \"session_id\": \"TsioryTest\",\n        \"user_id\": \"r.tsiory@idun-group.com\",\n        \"answer\": \"Hello\",\n        \"query\": \"Hello\",\n        \"profile\": {\n            \"linkedin_url\": \"https://linkedin.com/in/tsiory-rakotoarivelo\",\n            \"full_name\": \"Tsiory Rakotoarivelo\",\n            \"headline\": \"Product Manager | Shaping ideas into reality💡\",\n            \"current_company\": \"Idun Group\",\n            \"current_company_url\": \"https://www.linkedin.com/company/idun-group\",\n            \"current_position\": \"Product Manager\",\n            \"location\": \"France\",\n            \"industry\": \"N/A\",\n            \"experience\": \"Product Manager chez Idun Group (Mar 2024 - Present) \\nProduct Manager chez Babilou Family (Feb 2022 - Mar 2024)\\nProdut Owner chez SOLUTEC (Mar 2019 - Feb 2022)\\nProject Management Officer chez Allianz France (Oct 2016 - Oct 2018)\\nFull-stack Developer chez Edison Services (Jun 2016 - Aug 2016)\",\n            \"education\": \"University of Paris I: Panthéon-Sorbonne, Master 2 (M2) IKSEM, Information & Knowledge Systems: Engineering and Management (2017 - 2018)\\nUniversity of Paris I: Panthéon-Sorbonne, Licence MIAGE, Administration et gestion de l''informatique / technologies de l''information (2015 - 2016)\",\n            \"profile_picture_url\": \"https://media.licdn.com/dms/image/v2/D4E03AQE-TA5pWZmFfw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1722006250255?e=1761782400&v=beta&t=B1UpCyIFHLj72qX4PzQb6l-aavMqR9mubsS84mBA43s\",\n            \"decision_maker\": \"Oui - En tant que Product Manager chez Idun Group, Tsiory influence directement le développement de produits et les stratégies. Son expérience antérieure en tant que Product Owner et ses compétences en gestion de produit renforcent son rôle décisionnel.\",\n            \"parcours_pro\": \"Tsiory a progressé de PMO IT chez Allianz à Product Manager, avec une expérience significative en tant que freelance. Son expertise couvre le management de produit, l'UX/UI, et la gestion de projet agile. Son parcours démontre une spécialisation croissante dans le développement de produits digitaux innovants.\",\n            \"stack_tech\": \"SaaS, IA, API\",\n            \"keywords\": \"Management de Produit, SaaS, IA, UX/UI, Agile, Data, Innovation\",\n            \"responsabilites\": \"Développement de produits digitaux, alignement vision produit/besoins utilisateurs, stratégie produit, gestion de roadmap, pilotage agile, coordination inter-équipes, gouvernance des données\",\n            \"certifications\": \"N/A\",\n            \"langues\": \"Anglais, Français\",\n            \"centres_interet\": \"Produit, IA, UX, Innovation\",\n            \"projets_realises\": \"N/A\",\n            \"email\": \"tsiory@idun-group.com\",\n            \"phone\": \"+33 6 33 41 54 69\"\n        }\n    },\n    \"error\": null\n}",
+                    "latency": 0,
+                    "statusCode": 200,
+                    "label": "",
+                    "headers": [],
+                    "bodyType": "INLINE",
+                    "filePath": "",
+                    "databucketID": "35we",
+                    "sendFileAsBody": false,
+                    "rules": [],
+                    "rulesOperator": "OR",
+                    "disableTemplating": false,
+                    "fallbackTo404": false,
+                    "default": true,
+                    "crudKey": "id",
+                    "callbacks": []
+                }
+            ],
+            "responseMode": null,
+            "streamingMode": null,
+            "streamingInterval": 0
+        }
+    ],
+    "rootChildren": [
+        {
+            "type": "route",
+            "uuid": "4e1cb7ba-3803-4c81-b38a-0d93d4bc98e9"
+        }
+    ],
+    "proxyMode": false,
+    "proxyHost": "",
+    "proxyRemovePrefix": false,
+    "tlsOptions": {
+        "enabled": false,
+        "type": "CERT",
+        "pfxPath": "",
+        "certPath": "",
+        "keyPath": "",
+        "caPath": "",
+        "passphrase": ""
+    },
+    "cors": true,
+    "headers": [
+        {
+            "key": "Content-Type",
+            "value": "application/json"
+        },
+        {
+            "key": "Access-Control-Allow-Origin",
+            "value": "http://localhost:8000"
+        },
+        {
+            "key": "Access-Control-Allow-Methods",
+            "value": "GET,POST,PUT,PATCH,DELETE,HEAD,OPTIONS"
+        },
+        {
+            "key": "Access-Control-Allow-Headers",
+            "value": "Content-Type, Origin, Accept, Authorization, Content-Length, X-Requested-With"
+        }
+    ],
+    "proxyReqHeaders": [
+        {
+            "key": "",
+            "value": ""
+        }
+    ],
+    "proxyResHeaders": [
+        {
+            "key": "",
+            "value": ""
+        }
+    ],
+    "data": [
+        {
+            "uuid": "d0e1232c-bc5e-440e-9dd8-880b52f6ce61",
+            "id": "35we",
+            "name": "chloe response",
+            "documentation": "",
+            "value": "\n  {\n    \"status\": \"success\",\n    \"data\": {\n        \"call_id\": \"f94516d7-4af3-4b83-82d2-ce67f8790a6d\",\n        \"session_id\": \"TsioryTest\",\n        \"user_id\": \"r.tsiory@idun-group.com\",\n        \"answer\": \"Hello\",\n        \"query\": \"Hello\",\n        \"profile\": {\n            \"linkedin_url\": \"https://linkedin.com/in/tsiory-rakotoarivelo\",\n            \"full_name\": \"Tsiory Rakotoarivelo\",\n            \"headline\": \"Product Manager | Shaping ideas into reality💡\",\n            \"current_company\": \"Idun Group\",\n            \"current_company_url\": \"https://www.linkedin.com/company/idun-group\",\n            \"current_position\": \"Product Manager\",\n            \"location\": \"France\",\n            \"industry\": \"N/A\",\n            \"experience\": \"Product Manager chez Idun Group (Mar 2024 - Present) \\nProduct Manager chez Babilou Family (Feb 2022 - Mar 2024)\\nProdut Owner chez SOLUTEC (Mar 2019 - Feb 2022)\\nProject Management Officer chez Allianz France (Oct 2016 - Oct 2018)\\nFull-stack Developer chez Edison Services (Jun 2016 - Aug 2016)\",\n            \"education\": \"University of Paris I: Panthéon-Sorbonne, Master 2 (M2) IKSEM, Information & Knowledge Systems: Engineering and Management (2017 - 2018)\\nUniversity of Paris I: Panthéon-Sorbonne, Licence MIAGE, Administration et gestion de l''informatique / technologies de l''information (2015 - 2016)\",\n            \"profile_picture_url\": \"https://media.licdn.com/dms/image/v2/D4E03AQE-TA5pWZmFfw/profile-displayphoto-shrink_800_800/profile-displayphoto-shrink_800_800/0/1722006250255?e=1761782400&v=beta&t=B1UpCyIFHLj72qX4PzQb6l-aavMqR9mubsS84mBA43s\",\n            \"decision_maker\": \"Oui - En tant que Product Manager chez Idun Group, Tsiory influence directement le développement de produits et les stratégies. Son expérience antérieure en tant que Product Owner et ses compétences en gestion de produit renforcent son rôle décisionnel.\",\n            \"parcours_pro\": \"Tsiory a progressé de PMO IT chez Allianz à Product Manager, avec une expérience significative en tant que freelance. Son expertise couvre le management de produit, l'UX/UI, et la gestion de projet agile. Son parcours démontre une spécialisation croissante dans le développement de produits digitaux innovants.\",\n            \"stack_tech\": \"SaaS, IA, API\",\n            \"keywords\": \"Management de Produit, SaaS, IA, UX/UI, Agile, Data, Innovation\",\n            \"responsabilites\": \"Développement de produits digitaux, alignement vision produit/besoins utilisateurs, stratégie produit, gestion de roadmap, pilotage agile, coordination inter-équipes, gouvernance des données\",\n            \"certifications\": \"N/A\",\n            \"langues\": \"Anglais, Français\",\n            \"centres_interet\": \"Produit, IA, UX, Innovation\",\n            \"projets_realises\": \"N/A\",\n            \"email\": \"tsiory@idun-group.com\",\n            \"phone\": \"+33 6 33 41 54 69\"\n        }\n    },\n    \"error\": null\n}\n"
+        }
+    ],
+    "callbacks": []
+}

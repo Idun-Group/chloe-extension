@@ -17,6 +17,7 @@ import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateProfileListDto } from './dto/profil-list.dto';
 import { ListType } from 'generated/prisma';
 import { DataConverterService } from 'src/data-converter/data-converter.service';
+import type { Request } from 'express';
 
 @Controller('profile-list')
 export class ProfileListController {
@@ -29,7 +30,10 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async createProfileList(@Body() body: CreateProfileListDto, @Req() req) {
+    async createProfileList(
+        @Body() body: CreateProfileListDto,
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
         try {
             const userId = req.user.id;
             const { type, name, description } = body;
@@ -63,7 +67,9 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Get('lazy')
-    async getLazyProfileLists(@Req() req) {
+    async getLazyProfileLists(
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
         try {
             const userId = req.user.id;
             const lists =
@@ -78,7 +84,9 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getProfileLists(@Req() req) {
+    async getProfileLists(
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
         try {
             const userId = req.user.id;
             const profileLists =
@@ -91,7 +99,10 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    async getProfileListById(@Param('id') id: string, @Req() req) {
+    async getProfileListById(
+        @Param('id') id: string,
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
         try {
             const userId = req.user.id;
             const profileList =
@@ -174,9 +185,12 @@ export class ProfileListController {
 
     @UseGuards(JwtAuthGuard)
     @Get('/csv/:id')
-    async exportProfileListToCsv(@Param('id') id: string, @Req() req) {
+    async exportProfileListToCsv(
+        @Param('id') id: string,
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
         try {
-            const userId = req.user.id;
+            const userId = req.user?.id;
             console.log('🔍 Exporting CSV for list:', id, 'user:', userId);
 
             const profileList =
@@ -218,8 +232,8 @@ export class ProfileListController {
                 dataToConvert =
                     profileList.peopleProfiles?.map((profile) => ({
                         'linkedin de la cible': profile.linkedinUrl,
-                        nom: profile.fullName.split(' ')[0],
-                        prénom: profile.fullName.split(' ')[1] || '',
+                        nom: profile.fullName?.split(' ')[0],
+                        prénom: profile.fullName?.split(' ')[1] || '',
                         "rôle de l'entreprise": profile.job || '',
                         localisation: profile.location,
                         téléphone: profile.phone || '',
@@ -281,6 +295,35 @@ export class ProfileListController {
             }
             throw new HttpException(
                 `Failed to export profile list to CSV: ${error.message}`,
+                500,
+            );
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Post('/history/register')
+    async registerProfileInHistory(
+        @Query('linkedinUrl') linkedinUrl: string,
+        @Req() req: any,
+    ) {
+        const ownerId = req.user.id;
+
+        const profile = await this.profileListService.registerProfileInHistory(
+            linkedinUrl,
+            ownerId,
+        );
+
+        console.log(profile);
+
+        if (profile) {
+            console.log('Profile registered in history:', profile);
+            return {
+                message: 'Profile registered in history successfully.',
+                profile,
+            };
+        } else {
+            throw new HttpException(
+                'Failed to register profile in history.',
                 500,
             );
         }

@@ -7,15 +7,29 @@ services:
         container_name: chloe-backend
         ports:
             - '8000:8000'
+            - '5555:5555' # Port pour le debugger
+            - '4000:4000' # Port pour le service de chat
         environment:
+            - NODE_ENV=development
             - PORT=8000
-            - DATABASE_URL=mongodb://mongodb:27017/chloe
+            - DATABASE_URL=mongodb://mongodb:27017/chloe?replicaSet=rs0
+            - LINKEDIN_CLIENT_ID=${LINKEDIN_CLIENT_ID}
+            - LINKEDIN_CLIENT_SECRET=${LINKEDIN_CLIENT_SECRET}
+            - LINKEDIN_REDIRECT_URI=${LINKEDIN_REDIRECT_URI}
+            - JWT_SECRET=${JWT_SECRET}
+            - JWT_ACCESS_EXPIRATION=${JWT_ACCESS_EXPIRATION}
+            - JWT_REFRESH_EXPIRATION=${JWT_REFRESH_EXPIRATION}
         depends_on:
             - mongodb
         volumes:
+            # Monter le code source pour le hot-reload
             - ./:/app
-            - /app/node_modules
-            - /app/generated
+            - ./nest-cli.json:/app/nest-cli.json
+            # Volume anonyme pour node_modules (performance)
+            - node_modules_cache:/app/node_modules
+        restart: unless-stopped
+        networks:
+            - app-network
     mongodb:
         image: mongo:7
         container_name: local-mongo
@@ -24,6 +38,8 @@ services:
         restart: unless-stopped
         volumes:
             - mongo_data:/data/db
+        networks:
+            - app-network
 
     mongo-init:
         image: mongo:7
@@ -36,6 +52,8 @@ services:
                 members: [{_id: 0, host: 'mongodb:27017'}]
             })"
         restart: 'no'
+        networks:
+            - app-network
 
     mongo-express:
         image: mongo-express:1
@@ -49,6 +67,13 @@ services:
             ME_CONFIG_MONGODB_ENABLE_ADMIN: 'true'
         depends_on:
             - mongodb
+        networks:
+            - app-network
 
 volumes:
     mongo_data:
+    node_modules_cache:
+
+networks:
+    app-network:
+        driver: bridge

@@ -1,4 +1,4 @@
-import { getToken, signinWithLinkedin } from './background/auth';
+import { getValidAccessToken, signinWithLinkedin } from './background/auth';
 import {
     handleNav,
     lastByTab,
@@ -22,8 +22,13 @@ import {
     getProfileListById,
     getProfileListsByType,
     lazyFetchProfileLists,
+    registerProfileInHistory,
     updateProfileList,
 } from './background/profil-list';
+import {
+    getProfileEmailByLinkedInUrl,
+    getProfilePhoneByLinkedInUrl,
+} from './background/chloe-api';
 
 chrome.webNavigation.onHistoryStateUpdated.addListener(
     (d) => {
@@ -47,7 +52,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         if (request.action === 'GET_TOKEN') {
             try {
-                const token = await getToken();
+                const token = await getValidAccessToken();
                 console.log('GET_TOKEN token :', token);
                 sendResponse({
                     status: token ? 'connected' : 'disconnected',
@@ -180,6 +185,47 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 });
             }
         }
+
+        if (request.action === 'GET_PROFILE_EMAIL') {
+            const { linkedinUrl } = request.data;
+            try {
+                const token = await getValidAccessToken();
+                if (!token) throw new Error('No token available');
+
+                const email = await getProfileEmailByLinkedInUrl(linkedinUrl);
+                sendResponse({ status: 'success', email });
+            } catch (error) {
+                console.error('Error getting token:', error);
+                sendResponse({ status: 'error', error });
+                return;
+            }
+        }
+
+        if (request.action === 'GET_PROFILE_PHONE') {
+            const { linkedinUrl } = request.data;
+            try {
+                const token = await getValidAccessToken();
+                if (!token) throw new Error('No token available');
+                const phone = await getProfilePhoneByLinkedInUrl(linkedinUrl);
+                sendResponse({ status: 'success', phone });
+            } catch (error) {
+                console.error('Error getting token:', error);
+                sendResponse({ status: 'error', error });
+                return;
+            }
+        }
+
+        if (request.action === 'REGISTER_PROFILE_IN_HISTORY') {
+            const { url } = request;
+            try {
+                const profile = await registerProfileInHistory(url);
+                sendResponse({ status: 'success', profile });
+            } catch (error) {
+                console.error('Error registering profile in history:', error);
+                sendResponse({ status: 'error', error });
+            }
+        }
     })();
+
     return true;
 });

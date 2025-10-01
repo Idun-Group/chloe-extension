@@ -17,13 +17,6 @@ import { CreateAIContextDto } from './dto/aicontext.dto';
 export class AicontextController {
     constructor(private readonly aicontextService: AicontextService) {}
 
-    // @UseGuards(JwtAuthGuard)
-    // @Get()
-    // async getAIContexts(@Req() request) {
-    //     const ownerId = request.user.id;
-    //     return this.aicontextService.getAIContextsByOwner(ownerId);
-    // }
-
     @UseGuards(JwtAuthGuard)
     @Post()
     async createAIContext(@Req() request, @Body() body: CreateAIContextDto) {

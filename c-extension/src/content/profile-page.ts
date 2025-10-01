@@ -1,5 +1,6 @@
 // --- Utils pour scrapping posts entreprise
 
+import { displayLoader, hideLoader } from './loader';
 import { displayAddToListModal } from './modal';
 
 // --- Navigation SPA : écoute les changements d'URL et rafraîchit la vue
@@ -116,6 +117,7 @@ export async function scrapeCompanyUpdates(max = 6): Promise<CompanyUpdate[]> {
 export function displayProfilePage(
     container: HTMLElement,
     profileType: 'people' | 'organization',
+    linkedInData?: any, // Données récupérées depuis le backend
 ) {
     container.innerHTML = `
         <nav class="chloe-extension__body__nav"> 
@@ -155,18 +157,18 @@ async function displayPeoplePage(container: HTMLElement) {
             <h3> Contacts </h3>
             <div class="info-container">
                 <p class="info-container"> 
-                    téléphone :  <span id="phone"> 06 ** ** ** ** </span> 
-                    <button> obtenir </button> 
-                    <div class="info-button" data-tip="5 crédits par obtentions"> i </div>
+                    téléphone :  <span id="profile-phone"> 06 ** ** ** ** </span> 
+                    <button id="get-phone-button"> obtenir </button> 
+                    <div class="info-button" id="get-phone-info" data-tip="5 crédits par obtentions"> i </div>
                 </p>
             </div>
 
             <div class="info-container">
                 <p>
-                    email : <span id="email"> ***@***.com </span> 
-                    <button> obtenir </button> 
+                    email : <span id="profile-email"> ***@***.com </span> 
+                    <button id="get-email-button"> obtenir </button> 
                 </p>
-                <div class="info-button"data-tip="5 crédits par obtentions"> i </div>
+                <div class="info-button"data-tip="5 crédits par obtentions" id="get-email-info"> i </div>
             </div>
         </div>
 
@@ -232,6 +234,63 @@ async function displayPeoplePage(container: HTMLElement) {
             location: userLocation,
             job,
         });
+    });
+
+    const phoneBtn = container.querySelector('#get-phone-button');
+
+    phoneBtn?.addEventListener('click', () => {
+        const linkedinUrl = location.href;
+
+        displayLoader(container, 'Recherche en cours...');
+
+        chrome.runtime.sendMessage(
+            {
+                action: 'GET_PROFILE_PHONE',
+                data: { linkedinUrl },
+            },
+            (response) => {
+                hideLoader();
+                console.log('Response from background:', response);
+
+                const phoneSpan = document.getElementById('profile-phone');
+                if (phoneSpan) {
+                    phoneSpan.textContent =
+                        response.phone || 'Téléphone non trouvé';
+                }
+
+                phoneBtn?.remove(); // Supprime le bouton après obtention
+                document.getElementById('get-phone-info')?.remove();
+            },
+        );
+    });
+
+    const emailBtn = container.querySelector('#get-email-button');
+    emailBtn?.addEventListener('click', () => {
+        const linkedinUrl = location.href;
+
+        console.log(linkedinUrl);
+
+        displayLoader(container, 'Recherche en cours...');
+
+        chrome.runtime.sendMessage(
+            {
+                action: 'GET_PROFILE_EMAIL',
+                data: { linkedinUrl },
+            },
+            (response) => {
+                hideLoader();
+                console.log('Response from background:', response);
+
+                const emailSpan = document.getElementById('profile-email');
+                if (emailSpan) {
+                    emailSpan.textContent =
+                        response.email || 'Email non trouvé';
+                }
+
+                emailBtn?.remove(); // Supprime le bouton après obtention
+                document.getElementById('get-email-info')?.remove();
+            },
+        );
     });
 }
 

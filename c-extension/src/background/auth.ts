@@ -45,7 +45,7 @@ export async function signinWithLinkedin() {
 
 type Token = {
     access_token: string;
-    refresh_token: string;
+    access_token_expire_in: number;
 };
 
 export async function saveToken(tokens: Token) {
@@ -58,4 +58,36 @@ export async function getToken(): Promise<Token | null> {
 }
 export async function clearToken() {
     await chrome.storage.local.remove('tokens');
+}
+
+export async function getValidAccessToken() {
+    const token = await getToken();
+
+    if (!token) return null;
+
+    if (token.access_token_expire_in > Date.now() / 1000 + 60) {
+        return token;
+    }
+
+    const res = await fetch('http://localhost:8000/auth/refresh', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.access_token) {
+        await clearToken();
+        return null;
+    }
+
+    const newToken: Token = {
+        access_token: data.access_token,
+        access_token_expire_in: Math.floor(Date.now() / 1000) + 900, // 15 minutes
+    };
+
+    await saveToken(newToken);
+
+    return newToken;
 }

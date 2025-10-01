@@ -1,8 +1,8 @@
-import { getToken } from './auth';
+import { getValidAccessToken } from './auth';
 
 export default async function getUserProfile() {
     try {
-        const token = await getToken();
+        const token = await getValidAccessToken();
 
         if (!token) throw new Error('No token available');
         const response = await fetch('http://localhost:8000/user/me', {

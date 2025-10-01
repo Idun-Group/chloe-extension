@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { AicontextController } from './aicontext.controller';
+import { ChloeApiController } from './chloe-api.controller';
 
-describe('AicontextController', () => {
-    let controller: AicontextController;
+describe('ChloeApiController', () => {
+    let controller: ChloeApiController;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [AicontextController],
+            controllers: [ChloeApiController],
         }).compile();
 
-        controller = module.get<AicontextController>(AicontextController);
+        controller = module.get<ChloeApiController>(ChloeApiController);
     });
 
     it('should be defined', () => {

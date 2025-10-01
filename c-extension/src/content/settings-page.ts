@@ -40,53 +40,60 @@ export default function displaySettingsPage(container: HTMLElement) {
                                 <button id="add-list-button" class="add-button"> Créer </button>
                             </div>
 
-                            <ul class="chloe-extension__body__my-lists__container">
-                                ${
-                                    response.profile.profileList
-                                        ? response.profile.profileList
-                                              .map(
-                                                  (list: {
-                                                      id: string;
-                                                      name: string;
-                                                      type:
-                                                          | 'PEOPLE'
-                                                          | 'ORGANIZATION';
-                                                      peopleProfiles: any[];
-                                                      organizationProfiles: any[];
-                                                  }) => `
-                                            <li class="chloe-extension__body__my-lists__container__item profile-list-item" data-list-id="${
-                                                list.id
-                                            }">
-                                                <p>
-                                                    <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
-                                                    ${list.name} | ${
-                                                      {
-                                                          PEOPLE: `${list.peopleProfiles.length} personnes`,
-                                                          ORGANIZATION: `${list.organizationProfiles.length} entreprises`,
-                                                      }[list.type]
-                                                  }
-                                                </p>
-                                                
-                                                <div>
-                                                    <button class="download-list-button action-btn" data-list-name="${
-                                                        list.name
+                            ${
+                                response.profile.profileList &&
+                                response.profile.profileList.length > 0
+                                    ? `
+                                    <ul class="chloe-extension__body__my-lists__container">
+                                        ${
+                                            response.profile.profileList
+                                                ? response.profile.profileList
+                                                      .map(
+                                                          (list: {
+                                                              id: string;
+                                                              name: string;
+                                                              type:
+                                                                  | 'PEOPLE'
+                                                                  | 'ORGANIZATION';
+                                                              peopleProfiles: any[];
+                                                              organizationProfiles: any[];
+                                                          }) => `
+                                                    <li class="chloe-extension__body__my-lists__container__item profile-list-item" data-list-id="${
+                                                        list.id
                                                     }">
-                                                        <img src="${imgBaseUrl}/icons/export.png" class="icon" alt="export icon"/>
-                                                    </button>
+                                                        <p>
+                                                            <img src="${imgBaseUrl}/icons/members.png" class="icon" alt="list icon"/>
+                                                            ${list.name} | ${
+                                                              {
+                                                                  PEOPLE: `${list.peopleProfiles.length} personnes`,
+                                                                  ORGANIZATION: `${list.organizationProfiles.length} entreprises`,
+                                                              }[list.type]
+                                                          }
+                                                        </p>
+                                                        
+                                                        <div>
+                                                            <button class="download-list-button action-btn" data-list-name="${
+                                                                list.name
+                                                            }">
+                                                                <img src="${imgBaseUrl}/icons/export.png" class="icon" alt="export icon"/>
+                                                            </button>
 
-                                                    <button class="go-to-list-button action-btn" data-list-name="${
-                                                        list.name
-                                                    }">
-                                                        <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="Go To icon"/>
-                                                    </button>
-                                                </div>
-                                            </li>
-                                        `,
-                                              )
-                                              .join('')
-                                        : '<p>Aucune liste trouvée.</p>'
-                                }
-                            </ul>
+                                                            <button class="go-to-list-button action-btn" data-list-name="${
+                                                                list.name
+                                                            }">
+                                                                <img src="${imgBaseUrl}/icons/go-to.png" class="icon" alt="Go To icon"/>
+                                                            </button>
+                                                        </div>
+                                                    </li>
+                                                `,
+                                                      )
+                                                      .join('')
+                                                : '<p>Aucune liste trouvée.</p>'
+                                        }
+                                    </ul>
+                                    `
+                                    : `<p>Aucune liste trouvée. Créez-en une pour commencer à organiser vos contacts !</p>`
+                            }
                         </div>
 
                         <div class="chloe-extension__body__my-contexts">
@@ -95,34 +102,41 @@ export default function displaySettingsPage(container: HTMLElement) {
                                 <button id="add-context-button" class="add-button"> Créer </button>
                             </div>
 
-                            <ul class="chloe-extension__body__my-contexts__container">
-                               ${response.profile.aiContext
-                                   .map(
-                                       (context: {
-                                           id: string;
-                                           title: string;
-                                           content: string;
-                                           default: boolean;
-                                       }) => `
-                                    <li data-id="${
-                                        context.id
-                                    }" class="chloe-extension__body__my-contexts__container__item chloe-context-item">
-                                        <p> <img src="${imgBaseUrl}/icons/document.png" class="icon" alt="document icon"/> ${
-                                           context.title
-                                       } </p> ${
-                                           context.default
-                                               ? '<span class="default-badge">Par défaut</span>'
-                                               : ''
-                                       }
-                                        <div class="chloe-extension__body__my-contexts__container__item__action"> 
-                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-modify action-btn"> <img src="${imgBaseUrl}/icons/modify.png" class="icon" alt="document icon"/> </button>
-                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-delete action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
-                                        </div>
-                                     </li>
-                                `,
-                                   )
-                                   .join('')}
-                            </ul>
+                            ${
+                                response.profile.aiContext &&
+                                response.profile.aiContext.length > 0
+                                    ? `
+                                        <ul class="chloe-extension__body__my-contexts__container">
+                                            ${response.profile.aiContext
+                                                .map(
+                                                    (context: {
+                                                        id: string;
+                                                        title: string;
+                                                        content: string;
+                                                        default: boolean;
+                                                    }) => `
+                                                    <li data-id="${
+                                                        context.id
+                                                    }" class="chloe-extension__body__my-contexts__container__item chloe-context-item">
+                                                        <p> <img src="${imgBaseUrl}/icons/document.png" class="icon" alt="document icon"/> ${
+                                                        context.title
+                                                    } </p> ${
+                                                        context.default
+                                                            ? '<span class="default-badge">Par défaut</span>'
+                                                            : ''
+                                                    }
+                                                        <div class="chloe-extension__body__my-contexts__container__item__action"> 
+                                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-modify action-btn"> <img src="${imgBaseUrl}/icons/modify.png" class="icon" alt="document icon"/> </button>
+                                                            <button class="chloe-extension__body__my-contexts__container__item__action__btn chloe-context-delete action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
+                                                        </div>
+                                                    </li>
+                                                `,
+                                                )
+                                                .join('')}
+                                        </ul>
+                                    `
+                                    : `<p>Aucun contexte trouvé. Créez-en un pour améliorer vos interactions !</p>`
+                            }
                         </div>
 
                         <div class="chloe-extension__body__profile__outreach">
@@ -132,6 +146,8 @@ export default function displaySettingsPage(container: HTMLElement) {
                                 Lancer une recherche approfondie
                             </button>
                         </div>
+
+                        <button id="logout-btn"> Logout </button>
                     `;
 
                     const createListButton =

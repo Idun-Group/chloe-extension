@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { DataConverterService } from './data-converter.service';
+import { ChloeApiService } from './chloe-api.service';
 
-describe('DataConverterService', () => {
-    let service: DataConverterService;
+describe('ChloeApiService', () => {
+    let service: ChloeApiService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            providers: [DataConverterService],
+            providers: [ChloeApiService],
         }).compile();
 
-        service = module.get<DataConverterService>(DataConverterService);
+        service = module.get<ChloeApiService>(ChloeApiService);
     });
 
     it('should be defined', () => {

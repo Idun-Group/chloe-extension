@@ -10,7 +10,7 @@ export class UserController {
     @Get('me')
     getProfile(@Req() req: Request) {
         console.log('req.user :', req.user);
-        const profile = this.userService.findByLinkedinId(
+        const profile = this.userService.findById(
             (req.user as { id: string }).id,
         );
         return profile;

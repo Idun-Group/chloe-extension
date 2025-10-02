@@ -50,6 +50,7 @@ export class AuthService {
         };
     }
 
+
     async getUserInfo(accessToken: string) {
         const response = await firstValueFrom(
             this.httpService.get(this.userInfoUrl, {

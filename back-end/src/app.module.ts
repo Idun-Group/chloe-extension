@@ -19,6 +19,7 @@ import { PeopleProfileModule } from './people-profile/people-profile.module';
 import { ProfileListModule } from './profile-list/profile-list.module';
 import { OrganizationProfileModule } from './organization-profile/organization-profile.module';
 import { DataConverterModule } from './data-converter/data-converter.module';
+import { StripeModule } from './stripe/stripe.module';
 import { ChloeApiModule } from './chloe-api/chloe-api.module';
 
 @Module({
@@ -40,6 +41,8 @@ import { ChloeApiModule } from './chloe-api/chloe-api.module';
                 JWT_ACCESS_EXPIRATION: Joi.string().default('15m'),
                 JWT_REFRESH_EXPIRATION: Joi.string().default('30d'),
 
+                STRIPE_SECRET_KEY: Joi.string().required(),
+
                 CHLOE_API_SECRET_KEY: Joi.string().required(),
                 CHLOE_API_URL: Joi.string().required(),
             }),
@@ -51,6 +54,7 @@ import { ChloeApiModule } from './chloe-api/chloe-api.module';
         ProfileListModule,
         OrganizationProfileModule,
         DataConverterModule,
+        StripeModule,
         ChloeApiModule,
     ],
     controllers: [

@@ -22,19 +22,17 @@ export class ChloeApiService {
         const payloadJson = JSON.stringify(payload);
         console.log('Chloe API request payload:', payloadJson);
 
-        // const response = await fetch(
-        //     `https://sales-agent-api-102305464279.europe-west1.run.app/chat`,
-        //     {
-        //         method: 'POST',
-        //         headers: {
-        //             'x-api-key': `${this.configService.get('CHLOE_API_SECRET_KEY')}`,
-        //             'Content-Type': 'application/json', // ✅ Indique que le body est du JSON
-        //         },
-        //         body: payloadJson,
-        //     },
-        // );
-
-        const response = await fetch('http://localhost:4000');
+        const response = await fetch(
+            `https://sales-agent-api-102305464279.europe-west1.run.app/chat`,
+            {
+                method: 'POST',
+                headers: {
+                    'x-api-key': `${this.configService.get('CHLOE_API_SECRET_KEY')}`,
+                    'Content-Type': 'application/json', // ✅ Indique que le body est du JSON
+                },
+                body: payloadJson,
+            },
+        );
 
         console.log('Chloe API raw response status:', response.status);
 

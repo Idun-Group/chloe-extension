@@ -91,3 +91,20 @@ export async function getValidAccessToken() {
 
     return newToken;
 }
+
+export async function checkAuth() {
+    const token = await getValidAccessToken();
+    return token !== null;
+}
+
+export async function logout() {
+    await clearToken();
+
+    const res = await fetch('http://localhost:8000/auth/logout', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+    });
+
+    return true;
+}

@@ -107,13 +107,14 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@Body() body: { refresh_token: string }) {
-        if (!body.refresh_token) {
+    async logout(@Req() req: Request) {
+        const refresh_token = req.cookies['refresh_token'];
+        if (!refresh_token) {
             throw new BadRequestException('Refresh token is required');
         }
 
         try {
-            const payload = this.jwtService.verify(body.refresh_token);
+            const payload = this.jwtService.verify(refresh_token);
 
             if (payload.type !== 'refresh') {
                 throw new UnauthorizedException('Invalid token type');
@@ -121,7 +122,7 @@ export class AuthController {
 
             await this.authService.revokeRefreshToken(
                 payload.id,
-                body.refresh_token,
+                refresh_token,
             );
 
             return { message: 'Successfully logged out' };

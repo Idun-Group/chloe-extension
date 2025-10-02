@@ -145,8 +145,10 @@ async function displayPeoplePage(container: HTMLElement) {
     const imgUrl = chrome.runtime.getURL('public/assets/images');
     const user = location.href.split('/')[4];
 
+    const url = location.href;
+
     container.innerHTML = `
-        <button id="add-profile-button" class="add-profile-button"> + </button>
+        <button id="add-profile-button" class="add-profile-button"> Ajouter à une liste </button>
         <div class="chloe-extension__body__profile__introduce">
             <h2 id="profile-full-name" class="chloe-extension__body__profile__introduce__full-name"> Prénom Nom </h2>
             <p> <span id="profile-job"> Job name </span>  <span id="profile-companie"> Entreprise </span> </p>
@@ -292,13 +294,29 @@ async function displayPeoplePage(container: HTMLElement) {
             },
         );
     });
+
+    chrome.runtime.sendMessage(
+        {
+            action: 'REGISTER_PROFILE_IN_HISTORY',
+            url: url,
+        },
+        (response) => {
+            if (response.profile && response.status === 'success') {
+                console.log('Registered profile:', response);
+                document.getElementById('profile-phone')!.textContent =
+                    response.profile.phone || '06 ** ** ** **';
+                document.getElementById('profile-email')!.textContent =
+                    response.profile.email || '********@***.com';
+            }
+        },
+    );
 }
 
 const displayCompanyPage = async (container: HTMLElement) => {
     const imgUrl = chrome.runtime.getURL('public/assets/images');
 
     container.innerHTML = `
-        <button id="add-profile-button" class="add-profile-button"> + </button>
+        <button id="add-profile-button" class="add-profile-button"> Ajouter à une liste </button>
         <div class="chloe-extension__body__profile__introduce">
             <h3 id="company-name"> nom de l'entreprise </h3>
             <p> <span id="nb-employees"> 10+ </span> Employés </p>

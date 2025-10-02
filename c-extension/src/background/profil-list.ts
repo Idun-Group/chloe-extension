@@ -400,7 +400,5 @@ export async function registerProfileInHistory(url: string) {
 
     const data = await response.json();
 
-    console.log('Profile registered in history:', data);
-
-    return data;
+    return data.profile;
 }

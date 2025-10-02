@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     HttpException,
     Param,
@@ -157,6 +158,33 @@ export class ProfileListController {
             }
         } catch (error) {
             throw new Error(`Failed to update profile list: ${error}`);
+        }
+    }
+
+    @UseGuards(JwtAuthGuard)
+    @Delete(':id')
+    async deleteProfileList(
+        @Param('id') id: string,
+        @Req() req: Request & { user: { id: string; email: string } },
+    ) {
+        try {
+            const userId = req.user.id;
+            const existingList =
+                await this.profileListService.getProfileListById(id);
+            if (existingList) {
+                if (existingList.ownerId !== userId) {
+                    throw new HttpException(
+                        'Unauthorized access to this profile list',
+                        403,
+                    );
+                }
+                await this.profileListService.deleteProfileList(id);
+                return { message: 'Profile list deleted successfully' };
+            } else {
+                throw new HttpException('Profile list not found', 404);
+            }
+        } catch (error) {
+            throw new Error(`Failed to delete profile list: ${error}`);
         }
     }
 

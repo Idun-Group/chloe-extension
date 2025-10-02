@@ -87,10 +87,17 @@ export class ProfileListService {
         }
     }
 
-    async deleteProfileList(id: string) {
+    async deleteProfileList(listId: string) {
         try {
+            await this.prisma.peopleProfile.deleteMany({
+                where: { profileListId: listId },
+            });
+
+            await this.prisma.organizationProfile.deleteMany({
+                where: { profileListId: listId },
+            });
             await this.prisma.profileList.delete({
-                where: { id, type: { not: ListType.HISTORY } },
+                where: { id: listId, type: { not: ListType.HISTORY } },
             });
             return { message: 'Profile list deleted successfully' };
         } catch (error) {

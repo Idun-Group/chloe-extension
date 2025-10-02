@@ -1,5 +1,6 @@
 import { displayCreateContextModal, displayCreateListModal } from './modal';
 import { displayListPage } from './profile-list-tab';
+import createToast from './toast';
 
 export default function displaySettingsPage(container: HTMLElement) {
     console.log('Displaying Settings Page');
@@ -72,6 +73,8 @@ export default function displaySettingsPage(container: HTMLElement) {
                                                         </p>
                                                         
                                                         <div>
+                                                            <button class="delete-list-button action-btn"> <img src="${imgBaseUrl}/icons/trash.png" class="icon" alt="document icon"/> </button>
+
                                                             <button class="download-list-button action-btn" data-list-name="${
                                                                 list.name
                                                             }">
@@ -191,6 +194,33 @@ export default function displaySettingsPage(container: HTMLElement) {
                         });
 
                         item.querySelector(
+                            '.delete-list-button',
+                        )?.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const currentListId = (e.target as HTMLElement)
+                                .closest('.profile-list-item')
+                                ?.getAttribute('data-list-id');
+                            console.log('Delete list:', currentListId);
+                            chrome.runtime.sendMessage(
+                                {
+                                    action: 'DELETE_PROFILE_LIST',
+                                    data: { id: currentListId },
+                                },
+                                (response) => {
+                                    console.log('Delete response:', response);
+
+                                    if (response.message) {
+                                        displaySettingsPage(container);
+                                        createToast(
+                                            'Liste supprimée avec succès',
+                                            'success',
+                                        );
+                                    }
+                                },
+                            );
+                        });
+
+                        item.querySelector(
                             '.go-to-list-button',
                         )?.addEventListener('click', (e) => {
                             e.stopPropagation();
@@ -246,10 +276,18 @@ export default function displaySettingsPage(container: HTMLElement) {
                                         if (response.ok) {
                                             displaySettingsPage(container);
                                         } else {
-                                            alert(
+                                            createToast(
                                                 'Erreur lors de la suppression du contexte',
+                                                'error',
                                             );
                                         }
+
+                                        createToast(
+                                            response.ok
+                                                ? 'Contexte supprimé avec succès'
+                                                : 'Erreur lors de la suppression du contexte',
+                                            response.ok ? 'success' : 'error',
+                                        );
                                     },
                                 );
                             }

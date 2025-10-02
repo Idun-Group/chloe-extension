@@ -1,4 +1,5 @@
 import displaySettingsPage from './settings-page';
+import createToast from './toast';
 
 export function displayModal() {
     const body = document.getElementById('chloe-extension-body');
@@ -97,20 +98,16 @@ export function displayCreateListModal() {
                     },
                 },
                 (response) => {
-                    if (response.success) {
-                        console.log(
-                            'List created successfully:',
-                            response.data,
-                        );
+                    console.log(response);
+                    console.log('List created successfully:', response.data);
 
-                        displaySettingsPage(
-                            document.getElementById(
-                                'chloe-extension-body',
-                            ) as HTMLElement,
-                        );
-                    } else {
-                        console.error('Error creating list:', response.error);
-                    }
+                    const body = document.getElementById(
+                        'chloe-extension-body',
+                    ) as HTMLElement;
+
+                    displaySettingsPage(body);
+
+                    createToast('Liste créée avec succès !', 'success');
                 },
             );
         });
@@ -208,6 +205,10 @@ export function displayCreateContextModal(
                                 'runtime error:',
                                 chrome.runtime.lastError,
                             );
+                            createToast(
+                                'Erreur lors de la création de la liste.',
+                                'error',
+                            );
                             return;
                         } else {
                             const chloeBody = document.getElementById(
@@ -215,6 +216,10 @@ export function displayCreateContextModal(
                             );
                             if (chloeBody) {
                                 displaySettingsPage(chloeBody);
+                                createToast(
+                                    'Liste créée avec succès !',
+                                    'success',
+                                );
                             }
                         }
                     },
@@ -232,9 +237,9 @@ export function displayCreateContextModal(
                     },
                     () => {
                         if (chrome.runtime.lastError) {
-                            console.error(
-                                'runtime error:',
-                                chrome.runtime.lastError,
+                            createToast(
+                                'Erreur lors de la modification du contexte.',
+                                'error',
                             );
                             return;
                         }
@@ -242,7 +247,24 @@ export function displayCreateContextModal(
                             'chloe-extension-body',
                         );
                         if (chloeBody) {
-                            displaySettingsPage(chloeBody);
+                            if (chrome.runtime.lastError) {
+                                createToast(
+                                    'Erreur lors de la modification du contexte.',
+                                    'error',
+                                );
+                                return;
+                            } else {
+                                const chloeBody = document.getElementById(
+                                    'chloe-extension-body',
+                                );
+                                if (chloeBody) {
+                                    displaySettingsPage(chloeBody);
+                                    createToast(
+                                        'Contexte modifié avec succès !',
+                                        'success',
+                                    );
+                                }
+                            }
                         }
                     },
                 );
@@ -340,7 +362,29 @@ export function displayAddToListModal(
                                     },
                                 },
                                 () => {
-                                    alert('Profil ajouté à la liste !');
+                                    if (chrome.runtime.lastError) {
+                                        console.error(
+                                            'runtime error:',
+                                            chrome.runtime.lastError,
+                                        );
+                                        createToast(
+                                            "Erreur lors de l'ajout du profil à la liste.",
+                                            'error',
+                                        );
+                                        return;
+                                    } else {
+                                        const chloeBody =
+                                            document.getElementById(
+                                                'chloe-extension-body',
+                                            );
+                                        if (chloeBody) {
+                                            displaySettingsPage(chloeBody);
+                                            createToast(
+                                                'Profil ajouté à la liste !',
+                                                'success',
+                                            );
+                                        }
+                                    }
                                 },
                             );
                         });

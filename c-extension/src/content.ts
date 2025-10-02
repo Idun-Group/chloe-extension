@@ -25,7 +25,7 @@ container.innerHTML = `
 )}/brand/chloe.jpg" alt="Chloe Icon" /> </button>
     <div class="chloe-extension retracted" id="chloe-extension">
 
-            
+        <div id="toast-container"></div>
         <header class="chloe-extension__header">
         <button id="chloe-extension-title-btn">
             <h2  class="chloe-extension__header__title">

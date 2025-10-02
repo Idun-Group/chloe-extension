@@ -1,0 +1,52 @@
+#chloe-extension {
+    #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 10000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .toast {
+        padding: 15px 20px;
+        color: #fff;
+        border-radius: 8px; /* Coins arrondis pour l'esthétique */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        opacity: 0; /* Commence caché pour l'animation */
+        transform: translateX(100%); /* Commence hors de l'écran */
+        transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+        min-width: 280px;
+        max-width: 90vw; /* Adaptatif pour mobile */
+        font-size: 14px;
+
+        cursor: pointer; /* Indique qu'il est cliquable pour la fermeture manuelle */
+        &.show {
+            opacity: 1;
+            transform: translateX(0); /* Glisse dans l'écran */
+        }
+        &.success {
+            background-color: #4caf50; /* Vert pour succès */
+        }
+        &.error {
+            background-color: #f44336; /* Rouge pour erreur */
+        }
+        &.info {
+            background-color: #2196f3; /* Bleu pour info */
+        }
+
+        @media (max-width: 600px) {
+            #toast-container {
+                top: auto;
+                bottom: 20px;
+                right: 50%;
+                transform: translateX(50%);
+                align-items: center; /* Centre les toasts sur le petit écran */
+            }
+            .toast {
+                max-width: 90vw;
+            }
+        }
+    }
+}

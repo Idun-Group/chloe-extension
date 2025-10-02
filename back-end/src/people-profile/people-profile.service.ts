@@ -22,6 +22,21 @@ export class PeopleProfileService {
             },
         });
 
+        const historyProfile = await this.prisma.peopleProfile.findFirst({
+            where: {
+                profileList: {
+                    type: 'HISTORY',
+                    ownerId: (
+                        await this.prisma.profileList.findUnique({
+                            where: { id: profileListId },
+                            select: { ownerId: true },
+                        })
+                    )?.ownerId,
+                },
+                linkedinUrl,
+            },
+        });
+
         if (existingProfile) {
             // Mettre à jour le profil existant
             return this.prisma.peopleProfile.update({
@@ -30,8 +45,8 @@ export class PeopleProfileService {
                     fullName,
                     location,
                     job,
-                    phone,
-                    email,
+                    phone: historyProfile?.phone,
+                    email: historyProfile?.email,
                     updatedAt: new Date(),
                 },
             });
@@ -43,8 +58,8 @@ export class PeopleProfileService {
                     job,
                     fullName,
                     location,
-                    phone,
-                    email,
+                    phone: historyProfile?.phone,
+                    email: historyProfile?.email,
                     profileList: { connect: { id: profileListId } },
                 },
             });

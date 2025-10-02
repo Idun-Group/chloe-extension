@@ -1,4 +1,8 @@
-import { getValidAccessToken, signinWithLinkedin } from './background/auth';
+import {
+    checkAuth,
+    getValidAccessToken,
+    signinWithLinkedin,
+} from './background/auth';
 import {
     handleNav,
     lastByTab,
@@ -84,6 +88,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
                 });
             }
             sendResponse({ ok: true });
+        }
+
+        if (request.action === 'CHECK_AUTH') {
+            const isAuthenticated = await checkAuth();
+            sendResponse({ isAuthenticated });
         }
 
         if (request.action === 'GET_PROFILE') {

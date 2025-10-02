@@ -1,5 +1,100 @@
 @import '../abstract/variables';
-#popup {
+.popup {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     width: $popup-width;
     height: $popup-height;
+    margin: 0;
+    padding: 0;
+    &__header {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        background-color: $primary-color;
+        border: 1px solid $black;
+        padding: 4px;
+        &__title {
+            border-radius: 52px;
+            width: max-content;
+            font-size: 18px;
+            background-color: $black;
+            align-items: center;
+            font-weight: bold;
+            color: white;
+            display: flex;
+            padding: 8px 16px;
+            &__logo {
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                border: 1px solid $black;
+                object-fit: cover;
+                margin-right: 16px;
+            }
+        }
+
+        &__button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            &:hover {
+                background-color: rgba(0, 0, 0, 0.1);
+            }
+            &__icon {
+                width: 20px;
+                height: 20px;
+                object-fit: cover;
+            }
+        }
+    }
+
+    &__main {
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        // Ajouter un peu de padding pour que le contenu ne touche pas les bords
+        padding: 8px;
+        // Faire en sorte que le contenu prenne toute la hauteur disponible
+        flex-grow: 1;
+        overflow: hidden; // Empêcher le débordement du contenu
+
+        &__title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        &__button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            background-color: $black;
+            color: white;
+            border-radius: 24px;
+            border: none;
+            cursor: pointer;
+            &__icon {
+                width: 16px;
+                height: 16px;
+                object-fit: cover;
+            }
+        }
+
+        &__text {
+            text-align: center;
+            margin-top: 16px;
+            font-size: 14px;
+            font-style: italic;
+        }
+    }
 }

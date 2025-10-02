@@ -106,43 +106,21 @@ function renderFor(url: string) {
 const observer = new MutationObserver((_m, obs) => {
     if (document.body.contains(shell)) {
         renderFor(location.href);
-        chrome.runtime.sendMessage({
-            action: 'CONTENT_READY',
-            url: location.href,
-        });
+        chrome.runtime.sendMessage(
+            {
+                action: 'CONTENT_READY',
+                url: location.href,
+            },
+            () => {
+                chrome.runtime.onMessage.addListener((request) => {
+                    if (request.action === 'LI_URL_CHANGED') {
+                        renderFor(request.url);
+                    }
+                });
+            },
+        );
         obs.disconnect();
     }
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
-
-// Réaction au background (SPA)
-chrome.runtime.onMessage.addListener((request) => {
-    if (request.action === 'LI_URL_CHANGED') {
-        renderFor(request.url);
-
-        const url = request.url as string;
-        const re =
-            /^https?:\/\/(?:[\w-]+\.)?linkedin\.com\/(in|company|school)\/[^/?#]+\/?$/i;
-        if (re.test(url)) {
-            chrome.runtime.sendMessage(
-                {
-                    action: 'REGISTER_PROFILE_IN_HISTORY',
-                    url: url,
-                },
-                (response) => {
-                    console.log(
-                        'Response from background after registering profile:',
-                        response,
-                    );
-                    if (request.status === 'success' && response.profile) {
-                        console.log('Registered profile:', response.profile);
-
-                        document.getElementById('profile-email')!.textContent =
-                            response.profile.email || '********@***.com';
-                    }
-                },
-            );
-        }
-    }
-});

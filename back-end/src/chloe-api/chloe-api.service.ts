@@ -9,7 +9,7 @@ export class ChloeApiService {
         email: string,
         linkedinUrl: string,
         dataType: 'email' | 'phone',
-    ) {
+    ): Promise<{ profileEmail?: string; profilePhone?: string } | undefined> {
         const payload = {
             query: 'Hello',
             session_id: randomUUID(),
@@ -45,7 +45,12 @@ export class ChloeApiService {
 
         console.log('Chloe API response OK, parsing JSON...');
 
-        const result = await response.json();
+        const result = (await response.json()) as {
+            status: string;
+            data: {
+                profile: { email: string; phone: string };
+            };
+        };
 
         console.log('Chloe API response:', result);
 

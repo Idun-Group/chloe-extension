@@ -9,14 +9,13 @@ import {
     Put,
     Query,
     Req,
-    Res,
     StreamableFile,
     UseGuards,
 } from '@nestjs/common';
 import { ProfileListService } from './profile-list.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CreateProfileListDto } from './dto/profil-list.dto';
-import { ListType } from 'generated/prisma';
+import { ListType, ProfileList } from 'generated/prisma';
 import { DataConverterService } from 'src/data-converter/data-converter.service';
 import type { Request } from 'express';
 
@@ -52,8 +51,11 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get()
-    async getProfileListsByType(@Req() req, @Query('type') type: ListType) {
+    @Get('bytype')
+    async getProfileListsByType(
+        @Req() req: Request & { user: { id: string; email: string } },
+        @Query('type') type: ListType,
+    ): Promise<ProfileList[]> {
         try {
             const userId = req.user.id;
             const lists = await this.profileListService.getProfileListsByType(
@@ -131,7 +133,7 @@ export class ProfileListController {
     async updateProfileList(
         @Param('id') id: string,
         @Body() body: CreateProfileListDto,
-        @Req() req,
+        @Req() req: Request & { user: { id: string; email: string } },
     ) {
         try {
             const userId = req.user.id;
@@ -316,13 +318,9 @@ export class ProfileListController {
                 type: 'text/csv; charset=utf-8',
                 disposition: `attachment; filename*=UTF-8''${encodeURIComponent(profileList.name.split(' ').join('_'))}.csv`,
             });
-        } catch (error) {
-            console.error('💥 CSV export error:', error);
-            if (error instanceof HttpException) {
-                throw error;
-            }
+        } catch {
             throw new HttpException(
-                `Failed to export profile list to CSV: ${error.message}`,
+                `Failed to export profile list to CSV`,
                 500,
             );
         }
@@ -332,7 +330,7 @@ export class ProfileListController {
     @Post('/history/register')
     async registerProfileInHistory(
         @Query('linkedinUrl') linkedinUrl: string,
-        @Req() req: any,
+        @Req() req: Request & { user: { id: string; email: string } },
     ) {
         const ownerId = req.user.id;
 

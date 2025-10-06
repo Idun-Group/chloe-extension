@@ -2,7 +2,6 @@ import {
     BadRequestException,
     Body,
     Controller,
-    Get,
     Post,
     Req,
     Res,
@@ -47,8 +46,8 @@ export class AuthController {
             userInfo.sub,
             userInfo.email,
             token.access_token,
-            userInfo.name,
-            userInfo.picture,
+            userInfo.name!,
+            userInfo.picture!,
         );
 
         const accessToken = this.jwtService.sign(
@@ -84,13 +83,14 @@ export class AuthController {
 
     @Post('refresh')
     async refresh(@Req() req: Request) {
-        const refreshToken = req.cookies['refresh_token'];
+        const refreshToken = req.cookies['refresh_token'] as string;
 
         if (!refreshToken) {
             throw new BadRequestException('Refresh token is required');
         }
 
-        const payload = this.jwtService.verify(refreshToken);
+        const payload: { id: string; email: string; type: string } =
+            this.jwtService.verify(refreshToken);
 
         if (payload.type !== 'refresh') {
             throw new UnauthorizedException('Invalid token type');
@@ -108,13 +108,14 @@ export class AuthController {
 
     @Post('logout')
     async logout(@Req() req: Request) {
-        const refresh_token = req.cookies['refresh_token'];
+        const refresh_token = req.cookies['refresh_token'] as string;
         if (!refresh_token) {
             throw new BadRequestException('Refresh token is required');
         }
 
         try {
-            const payload = this.jwtService.verify(refresh_token);
+            const payload: { id: string; email: string; type: string } =
+                this.jwtService.verify(refresh_token);
 
             if (payload.type !== 'refresh') {
                 throw new UnauthorizedException('Invalid token type');
@@ -126,7 +127,7 @@ export class AuthController {
             );
 
             return { message: 'Successfully logged out' };
-        } catch (error) {
+        } catch {
             // Même si le token est invalide, on considère le logout réussi
             return { message: 'Successfully logged out' };
         }
@@ -139,7 +140,8 @@ export class AuthController {
         }
 
         try {
-            const payload = this.jwtService.verify(body.refresh_token);
+            const payload: { id: string; email: string; type: string } =
+                this.jwtService.verify(body.refresh_token);
 
             if (payload.type !== 'refresh') {
                 throw new UnauthorizedException('Invalid token type');
@@ -148,7 +150,7 @@ export class AuthController {
             await this.authService.revokeAllUserRefreshTokens(payload.id);
 
             return { message: 'Successfully logged out from all devices' };
-        } catch (error) {
+        } catch {
             throw new UnauthorizedException('Invalid refresh token');
         }
     }

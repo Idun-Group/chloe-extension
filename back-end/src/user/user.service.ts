@@ -13,42 +13,38 @@ export class UserService {
         fullName: string,
         imageUrl: string,
     ) {
-        try {
-            const user = await this.prisma.user.upsert({
-                where: { linkedinId: id },
-                update: {
-                    email,
-                    linkedinToken,
-                    fullName,
-                    imageUrl,
-                },
-                create: {
-                    linkedinId: id,
-                    email,
-                    linkedinToken,
-                    fullName,
-                    imageUrl,
-                    profileList: {
-                        create: {
-                            name: 'Default History List',
-                            description:
-                                'List that contains all your previously analyzed profiles',
-                            type: ListType.HISTORY,
-                        },
+        const user = await this.prisma.user.upsert({
+            where: { linkedinId: id },
+            update: {
+                email,
+                linkedinToken,
+                fullName,
+                imageUrl,
+            },
+            create: {
+                linkedinId: id,
+                email,
+                linkedinToken,
+                fullName,
+                imageUrl,
+                profileList: {
+                    create: {
+                        name: 'Default History List',
+                        description:
+                            'List that contains all your previously analyzed profiles',
+                        type: ListType.HISTORY,
                     },
                 },
-                select: {
-                    id: true,
-                    linkedinId: true,
-                    email: true,
-                    fullName: true,
-                    imageUrl: true,
-                },
-            });
-            return user;
-        } catch (error) {
-            throw new Error(error);
-        }
+            },
+            select: {
+                id: true,
+                linkedinId: true,
+                email: true,
+                fullName: true,
+                imageUrl: true,
+            },
+        });
+        return user;
     }
 
     async findById(id: string) {
@@ -90,7 +86,9 @@ export class UserService {
                 return user;
             }
         } catch (error) {
-            throw new Error(error);
+            throw new Error(
+                error instanceof Error ? error.message : String(error),
+            );
         }
     }
 }

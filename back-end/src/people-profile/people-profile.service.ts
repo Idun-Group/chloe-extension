@@ -11,8 +11,6 @@ export class PeopleProfileService {
         fullName: string,
         location: string,
         job: string | undefined,
-        phone: string | undefined,
-        email: string | undefined,
     ) {
         // Vérifier si le profil existe déjà
         const existingProfile = await this.prisma.peopleProfile.findFirst({

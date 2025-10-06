@@ -19,7 +19,10 @@ export class AicontextController {
 
     @UseGuards(JwtAuthGuard)
     @Post()
-    async createAIContext(@Req() request, @Body() body: CreateAIContextDto) {
+    async createAIContext(
+        @Req() request: Request & { user: { id: string } },
+        @Body() body: CreateAIContextDto,
+    ) {
         const ownerId = request.user.id;
 
         const { title, content, isDefault } = body;
@@ -38,14 +41,17 @@ export class AicontextController {
             }
 
             return newContext;
-        } catch (error) {
+        } catch {
             throw new Error('Failed to create AI context');
         }
     }
 
     @UseGuards(JwtAuthGuard)
     @Get(':id')
-    async getAIContextById(@Param('id') id: string, @Req() request) {
+    async getAIContextById(
+        @Param('id') id: string,
+        @Req() request: Request & { user: { id: string } },
+    ) {
         const ownerId = request.user.id;
 
         try {
@@ -55,7 +61,7 @@ export class AicontextController {
                 throw new Error('Unauthorized access to this context');
             }
             return context;
-        } catch (error) {
+        } catch {
             throw new Error('Failed to fetch AI context');
         }
     }
@@ -64,7 +70,7 @@ export class AicontextController {
     @Put(':id')
     async updateAIContext(
         @Param('id') id: string,
-        @Req() request,
+        @Req() request: Request & { user: { id: string } },
         @Body()
         body: {
             contextId: string;
@@ -85,14 +91,17 @@ export class AicontextController {
                 isDefault,
             );
             return updatedContext;
-        } catch (error) {
+        } catch {
             throw new Error('Failed to update AI context');
         }
     }
 
     @UseGuards(JwtAuthGuard)
     @Delete(':id')
-    async deleteAIContext(@Param('id') id: string, @Req() request) {
+    async deleteAIContext(
+        @Param('id') id: string,
+        @Req() request: Request & { user: { id: string } },
+    ) {
         const ownerId = request.user.id;
 
         try {
@@ -101,7 +110,7 @@ export class AicontextController {
                 ownerId,
             );
             return deletedContext;
-        } catch (error) {
+        } catch {
             throw new Error('Failed to delete AI context');
         }
     }

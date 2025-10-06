@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { PeopleProfileService } from './people-profile.service';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import CreatePeopleProfileDto from './dto/people-profile.dto';
@@ -18,8 +18,6 @@ export class PeopleProfileController {
                     body.fullName,
                     body.location,
                     body.job,
-                    body.phone,
-                    body.email,
                 );
 
             return newProfile;

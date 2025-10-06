@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ListType } from 'generated/prisma';
+import { ListType, ProfileList } from 'generated/prisma';
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -59,7 +59,10 @@ export class ProfileListService {
         }
     }
 
-    async getProfileListsByType(ownerId: string, type: ListType) {
+    async getProfileListsByType(
+        ownerId: string,
+        type: ListType,
+    ): Promise<ProfileList[]> {
         try {
             const lists = await this.prisma.profileList.findMany({
                 where: { ownerId, type },
@@ -207,23 +210,25 @@ export class ProfileListService {
                 where: { ownerId: data.userId },
             });
 
-            profilesList.forEach(async (profiles) => {
-                await this.prisma.peopleProfile.updateMany({
-                    where: {
-                        profileListId: profiles.id,
-                        linkedinUrl: data.linkedinUrl,
-                    },
-                    data: { email: data.email },
-                });
+            await Promise.all(
+                profilesList.map(async (profiles) => {
+                    await this.prisma.peopleProfile.updateMany({
+                        where: {
+                            profileListId: profiles.id,
+                            linkedinUrl: data.linkedinUrl,
+                        },
+                        data: { email: data.email },
+                    });
 
-                await this.prisma.organizationProfile.updateMany({
-                    where: {
-                        profileListId: profiles.id,
-                        linkedinUrl: data.linkedinUrl,
-                    },
-                    data: { email: data.email },
-                });
-            });
+                    await this.prisma.organizationProfile.updateMany({
+                        where: {
+                            profileListId: profiles.id,
+                            linkedinUrl: data.linkedinUrl,
+                        },
+                        data: { email: data.email },
+                    });
+                }),
+            );
         } catch (error) {
             throw new Error(`Failed to register profile email: ${error}`);
         }
@@ -239,23 +244,25 @@ export class ProfileListService {
                 where: { ownerId: data.userId },
             });
 
-            profilesList.forEach(async (profiles) => {
-                await this.prisma.peopleProfile.updateMany({
-                    where: {
-                        profileListId: profiles.id,
-                        linkedinUrl: data.linkedinUrl,
-                    },
-                    data: { phone: data.phone },
-                });
+            await Promise.all(
+                profilesList.map(async (profiles) => {
+                    await this.prisma.peopleProfile.updateMany({
+                        where: {
+                            profileListId: profiles.id,
+                            linkedinUrl: data.linkedinUrl,
+                        },
+                        data: { phone: data.phone },
+                    });
 
-                await this.prisma.organizationProfile.updateMany({
-                    where: {
-                        profileListId: profiles.id,
-                        linkedinUrl: data.linkedinUrl,
-                    },
-                    data: { phone: data.phone },
-                });
-            });
+                    await this.prisma.organizationProfile.updateMany({
+                        where: {
+                            profileListId: profiles.id,
+                            linkedinUrl: data.linkedinUrl,
+                        },
+                        data: { phone: data.phone },
+                    });
+                }),
+            );
         } catch (error) {
             throw new Error(`Failed to register profile phone: ${error}`);
         }

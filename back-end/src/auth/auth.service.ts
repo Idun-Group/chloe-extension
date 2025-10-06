@@ -32,11 +32,8 @@ export class AuthService {
                     ),
                 },
             }),
-        ).catch((e) => {
-            const data = e.response?.data;
-            throw new UnauthorizedException(
-                `Token exchange failed: ${JSON.stringify(data)}`,
-            );
+        ).catch(() => {
+            throw new UnauthorizedException(`Token exchange failed`);
         });
 
         console.log('Token response:', response.data);
@@ -50,7 +47,6 @@ export class AuthService {
         };
     }
 
-
     async getUserInfo(accessToken: string) {
         const response = await firstValueFrom(
             this.httpService.get(this.userInfoUrl, {
@@ -58,14 +54,16 @@ export class AuthService {
                     Authorization: `Bearer ${accessToken}`,
                 },
             }),
-        ).catch((e) => {
-            const data = e.response?.data;
-            throw new UnauthorizedException(
-                `User info retrieval failed: ${JSON.stringify(data)}`,
-            );
+        ).catch(() => {
+            throw new UnauthorizedException(`User info retrieval failed`);
         });
 
-        return response.data;
+        return response.data as {
+            sub: string;
+            email: string;
+            name?: string;
+            picture?: string;
+        };
     }
 
     async storeRefreshToken(userId: string, refreshToken: string) {

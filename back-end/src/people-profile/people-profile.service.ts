@@ -11,13 +11,26 @@ export class PeopleProfileService {
         fullName: string,
         location: string,
         job: string | undefined,
-        phone: string | undefined,
-        email: string | undefined,
     ) {
         // Vérifier si le profil existe déjà
         const existingProfile = await this.prisma.peopleProfile.findFirst({
             where: {
                 profileListId,
+                linkedinUrl,
+            },
+        });
+
+        const historyProfile = await this.prisma.peopleProfile.findFirst({
+            where: {
+                profileList: {
+                    type: 'HISTORY',
+                    ownerId: (
+                        await this.prisma.profileList.findUnique({
+                            where: { id: profileListId },
+                            select: { ownerId: true },
+                        })
+                    )?.ownerId,
+                },
                 linkedinUrl,
             },
         });
@@ -30,8 +43,8 @@ export class PeopleProfileService {
                     fullName,
                     location,
                     job,
-                    phone,
-                    email,
+                    phone: historyProfile?.phone,
+                    email: historyProfile?.email,
                     updatedAt: new Date(),
                 },
             });
@@ -43,8 +56,8 @@ export class PeopleProfileService {
                     job,
                     fullName,
                     location,
-                    phone,
-                    email,
+                    phone: historyProfile?.phone,
+                    email: historyProfile?.email,
                     profileList: { connect: { id: profileListId } },
                 },
             });

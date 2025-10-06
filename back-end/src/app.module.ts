@@ -19,7 +19,7 @@ import { PeopleProfileModule } from './people-profile/people-profile.module';
 import { ProfileListModule } from './profile-list/profile-list.module';
 import { OrganizationProfileModule } from './organization-profile/organization-profile.module';
 import { DataConverterModule } from './data-converter/data-converter.module';
-import { StripeModule } from './stripe/stripe.module';
+// import { StripeModule } from './stripe/stripe.module';
 import { ChloeApiModule } from './chloe-api/chloe-api.module';
 
 @Module({
@@ -54,7 +54,7 @@ import { ChloeApiModule } from './chloe-api/chloe-api.module';
         ProfileListModule,
         OrganizationProfileModule,
         DataConverterModule,
-        StripeModule,
+        // StripeModule,
         ChloeApiModule,
     ],
     controllers: [

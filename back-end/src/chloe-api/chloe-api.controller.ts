@@ -1,15 +1,6 @@
-import {
-    Body,
-    Controller,
-    Get,
-    Post,
-    Query,
-    Req,
-    UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { ChloeApiService } from './chloe-api.service';
-import { ChloeGetContactInput } from './dto/chloe-api.input';
 import { ProfileListService } from 'src/profile-list/profile-list.service';
 import { Request } from 'express';
 
@@ -70,7 +61,7 @@ export class ChloeApiController {
             throw new Error('No phone number found');
         }
 
-        const profile = await this.profileListService.registerProfilePhone({
+        await this.profileListService.registerProfilePhone({
             phone: userData.profilePhone,
             linkedinUrl: linkedinUrl,
             userId: userId,

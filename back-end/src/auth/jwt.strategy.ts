@@ -13,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy, 'jwt') {
             secretOrKey: config.getOrThrow<string>('JWT_SECRET'),
         });
     }
-    validate(payload: any) {
+    validate(payload: { id: string; email: string; type: string }) {
         if (payload.type !== 'access') {
             return null; // Seuls les access tokens sont valides pour l'authentification
         }

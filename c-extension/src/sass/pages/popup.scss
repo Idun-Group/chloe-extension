@@ -1,4 +1,6 @@
-@import '../abstract/variables';
+@use '../abstract/variables' as *;
+@use '../abstract/font' as *;
+
 .popup {
     display: flex;
     flex-direction: column;
@@ -17,12 +19,12 @@
         border: 1px solid $black;
         padding: 4px;
         &__title {
+            font-weight: 400;
             border-radius: 52px;
             width: max-content;
             font-size: 18px;
             background-color: $black;
             align-items: center;
-            font-weight: bold;
             color: white;
             display: flex;
             padding: 8px 16px;

@@ -1,4 +1,6 @@
-@import '../abstract/variables.scss';
+@use '../abstract/variables' as *;
+@use 'sass:color';
+@use '../abstract/font' as *;
 
 #chloe-extension {
     button {
@@ -9,7 +11,9 @@
         border-radius: 14px;
         cursor: pointer;
         margin: 0 16px;
-        font-size: 12px;
+        font-family: $font-secondary !important;
+        font-size: 14px !important;
+        font-weight: 400;
     }
 
     #chloe-extension-title-btn {
@@ -29,13 +33,10 @@
         display: flex;
         align-items: center !important;
         justify-content: center !important;
-        font-size: 28px !important;
         background-color: $black;
-        font-weight: bold;
         color: white !important;
         border-radius: 14px !important;
         cursor: pointer !important;
-        font-size: 12px !important;
     }
 }
 
@@ -64,7 +65,6 @@
             padding: 4px 8px;
             border-radius: 4px;
             white-space: nowrap;
-            font-size: 12px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 1000;
         }
@@ -96,6 +96,9 @@
         height: 20px;
         object-fit: cover;
     }
+    font-family: $font-secondary !important;
+    font-size: 14px !important;
+    font-weight: 400;
 }
 
 #chloe-floating-btn {
@@ -123,7 +126,7 @@
     }
 
     &:hover {
-        background-color: darken($primary-color, 10%);
+        background-color: color.adjust($primary-color, $lightness: -10%);
         box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
     }
 
@@ -133,4 +136,8 @@
         border-radius: 50%;
         object-fit: cover;
     }
+
+    font-family: $font-secondary !important;
+    font-size: 14px !important;
+    font-weight: 400;
 }

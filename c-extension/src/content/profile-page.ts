@@ -305,8 +305,16 @@ async function displayPeoplePage(container: HTMLElement) {
                 console.log('Registered profile:', response);
                 document.getElementById('profile-phone')!.textContent =
                     response.profile.phone || '06 ** ** ** **';
+                if (response.profile.email) {
+                    phoneBtn?.remove();
+                    document.getElementById('get-phone-info')?.remove();
+                }
                 document.getElementById('profile-email')!.textContent =
                     response.profile.email || '********@***.com';
+                if (response.profile.email) {
+                    emailBtn?.remove();
+                    document.getElementById('get-email-info')?.remove();
+                }
             }
         },
     );

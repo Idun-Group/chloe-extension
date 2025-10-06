@@ -7,6 +7,7 @@ export const displayLoader = (
 
     const loader = document.createElement('div');
     loader.id = 'loader-container';
+    loader.classList.add('loader-container');
     loader.innerHTML = `
         <div class="loader-container__spinner"></div>
         <div class="loader-container__text" id="text-loading">${textLoader}</div>

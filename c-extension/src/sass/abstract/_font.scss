@@ -1,0 +1,22 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('chrome-extension://ekffgldgcpiniekhhnefdgoacmeanobg/public/assets/fonts/inter.woff2')
+        format('woff2');
+}
+
+@font-face {
+    font-family: 'Onest';
+    src: url('chrome-extension://ekffgldgcpiniekhhnefdgoacmeanobg/public/assets/fonts/onest.woff2')
+        format('woff2');
+}
+
+@font-face {
+    font-family: 'Figtree';
+    src: url('chrome-extension://ekffgldgcpiniekhhnefdgoacmeanobg/public/assets/fonts/figtree.woff2')
+        format('woff2');
+}
+
+$font-primary: 'Figtree', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    sans-serif;
+$font-secondary: 'Inter', Arial, sans-serif;
+$font-accent: 'Onest', Georgia, serif;

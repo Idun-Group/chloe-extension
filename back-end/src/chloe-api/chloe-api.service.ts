@@ -14,13 +14,12 @@ export class ChloeApiService {
             query: 'Hello',
             session_id: randomUUID(),
             user_id: email,
-            task_type: 'ENRICH_MAIL',
+            task_type: dataType === 'email' ? 'ENRICH_MAIL' : 'ENRICH_PHONE',
             linkedin_url: linkedinUrl,
             return_fields: ['profile'],
         };
 
         const payloadJson = JSON.stringify(payload);
-        console.log('Chloe API request payload:', payloadJson);
 
         const response = await fetch(
             `https://sales-agent-api-102305464279.europe-west1.run.app/chat`,

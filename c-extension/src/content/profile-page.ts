@@ -583,18 +583,42 @@ export async function scrapeCompanyTopCard() {
     const companyWebsite =
         (
             await waitFor(
-                'a.org-top-card-summary__website-link, a[data-control-name="topcard_website"]',
+                'a.org-top-card-primary-actions__action>a[href^="http"]',
                 200,
             )
         )?.textContent?.trim() || '';
 
+    console.log(
+        'Company Website:',
+        await waitFor(
+            '.org-top-card-primary-actions__action>a[href^="http"]',
+            200,
+        ),
+    );
     // ✅ Mettre à jour le nom de l'entreprise dans le DOM
     dom.name && (dom.name.textContent = companyName);
     dom.employees && (dom.employees.textContent = employees || '10+');
     dom.location && (dom.location.textContent = location || 'Paris, France');
 
+    // ✅ Afficher le site web seulement s'il existe
+    if (companyWebsite && dom.website) {
+        dom.website.textContent = companyWebsite;
+        // S'assurer que le champ site web est visible
+        const websiteContainer = dom.website.parentElement;
+        if (websiteContainer) {
+            websiteContainer.style.display = '';
+        }
+    } else if (dom.website) {
+        // Cacher le champ site web s'il n'y a pas de site
+        const websiteContainer = dom.website.parentElement;
+        if (websiteContainer) {
+            websiteContainer.style.display = 'none';
+        }
+    }
+
     return {
         name: companyName,
+        website: companyWebsite,
         sector,
         specialty,
         location,

@@ -1,0 +1,184 @@
+@use '../abstract/variables' as *;
+
+// Styles pour le drag & drop du bouton flottant
+#chloe-floating-btn {
+    // Transitions fluides
+    transition: transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease,
+        background-color 0.2s ease !important;
+
+    // Curseur par défaut
+    cursor: grab !important;
+
+    // Amélioration du hover existant
+    &:hover {
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+    }
+
+    // État pendant le drag
+    &.dragging {
+        cursor: grabbing !important;
+        transform: scale(1.1) !important;
+        opacity: 0.8 !important;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5) !important;
+        z-index: 10001 !important;
+    }
+
+    // Animation de drop
+    &.dropping {
+        transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55) !important;
+        transform: scale(1) !important;
+    }
+
+    // État actif (mousedown)
+    &:active {
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    // Indicateur visuel que l'élément est draggable
+    &::before {
+        content: '';
+        position: absolute;
+        top: -2px;
+        left: -2px;
+        right: -2px;
+        bottom: -2px;
+        border-radius: 50%;
+        background: linear-gradient(
+            45deg,
+            rgba($primary-color, 0.3),
+            rgba($primary-color, 0.1)
+        );
+        z-index: -1;
+        opacity: 0;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover::before {
+        opacity: 1;
+    }
+}
+
+// Animation pour le container quand il se repositionne
+.chloe-extension {
+    &.repositioning {
+        transition: top 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94),
+            left 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+    }
+
+    // Animation d'ouverture améliorée
+    &:not(.retracted) {
+        animation: slideIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+}
+
+// Animations keyframes
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+@keyframes dragStart {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1.1);
+    }
+}
+
+@keyframes dragEnd {
+    0% {
+        transform: scale(1.1);
+    }
+    50% {
+        transform: scale(0.95);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+// Styles pour mobile/tablette
+@media (max-width: 768px) {
+    #chloe-floating-btn {
+        // Augmenter la taille du bouton sur mobile pour faciliter le drag
+        width: 70px !important;
+        height: 70px !important;
+
+        img {
+            width: 56px !important;
+            height: 56px !important;
+        }
+
+        // Zone de touch plus large
+        &::after {
+            content: '';
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            z-index: -1;
+        }
+    }
+
+    .chloe-extension {
+        // Ajuster la largeur du container sur mobile
+        width: calc(100vw - 40px) !important;
+        max-width: 400px !important;
+    }
+}
+
+// Styles pour les très petits écrans
+@media (max-width: 480px) {
+    .chloe-extension {
+        width: calc(100vw - 20px) !important;
+        height: calc(100vh - 120px) !important;
+        bottom: 10px !important;
+        left: 10px !important;
+    }
+}
+
+// Feedback visuel pendant le drag
+.drag-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+
+    &.active {
+        opacity: 1;
+    }
+}
+
+// Indicateur de zone de drop valide
+.drop-zone-indicator {
+    position: fixed;
+    border: 2px dashed $primary-color;
+    background: rgba($primary-color, 0.1);
+    border-radius: 8px;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+    z-index: 9998;
+
+    &.active {
+        opacity: 1;
+    }
+}

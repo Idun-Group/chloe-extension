@@ -587,6 +587,9 @@ export async function scrapeCompanyTopCard() {
                 200,
             )
         )?.textContent?.trim() || '';
+
+    // ✅ Mettre à jour le nom de l'entreprise dans le DOM
+    dom.name && (dom.name.textContent = companyName);
     dom.employees && (dom.employees.textContent = employees || '10+');
     dom.location && (dom.location.textContent = location || 'Paris, France');
 

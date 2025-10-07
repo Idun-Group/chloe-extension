@@ -28,11 +28,6 @@ export default function displaySettingsPage(container: HTMLElement) {
                             <p> Email : <span class="email">${
                                 response.profile.email
                             }</span> </p>
-                            <div class="info-container"> 
-                                <p> Abonnement : <span class="plan">Gratuit</span> </p>
-                                <button> Passer Premium </button>
-                                <div class="info-container"> i </div>
-                            </div>
                         </div>
 
                         <div class="chloe-extension__body__my-lists">
@@ -150,7 +145,6 @@ export default function displaySettingsPage(container: HTMLElement) {
                             </button>
                         </div>
 
-                        <button id="logout-btn"> Logout </button>
                     `;
 
                     const createListButton =

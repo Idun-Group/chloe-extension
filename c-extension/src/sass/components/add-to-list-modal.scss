@@ -1,3 +1,5 @@
+@use '../abstract/variables' as *;
+
 .add-to-list {
     &__list {
         margin-bottom: 8px;
@@ -13,9 +15,10 @@
             align-items: center;
             gap: 8px;
             padding: 8px;
-            border: 1px solid black;
-            border-radius: 4px;
             cursor: pointer;
+            &:not(:last-child) {
+                border-bottom: 1px solid $grey-light;
+            }
         }
     }
 }

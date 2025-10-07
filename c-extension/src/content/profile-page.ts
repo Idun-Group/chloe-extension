@@ -305,8 +305,16 @@ async function displayPeoplePage(container: HTMLElement) {
                 console.log('Registered profile:', response);
                 document.getElementById('profile-phone')!.textContent =
                     response.profile.phone || '06 ** ** ** **';
+                if (response.profile.phone) {
+                    phoneBtn?.remove();
+                    document.getElementById('get-phone-info')?.remove();
+                }
                 document.getElementById('profile-email')!.textContent =
-                    response.profile.email || '********@***.com';
+                    response.profile.email || '***@***.com';
+                if (response.profile.email) {
+                    emailBtn?.remove();
+                    document.getElementById('get-email-info')?.remove();
+                }
             }
         },
     );
@@ -570,9 +578,8 @@ export async function scrapeCompanyTopCard() {
         location: document.getElementById('company-location'),
     };
     const companyName =
-        (
-            await waitFor('.org-top-card-summary__title', 200)
-        )?.textContent?.trim() || 'Nom de l’entreprise';
+        (await waitFor('.org-top-card-summary__title'))?.textContent?.trim() ||
+        'Nom de l’entreprise';
     const companyWebsite =
         (
             await waitFor(
@@ -580,6 +587,9 @@ export async function scrapeCompanyTopCard() {
                 200,
             )
         )?.textContent?.trim() || '';
+
+    // ✅ Mettre à jour le nom de l'entreprise dans le DOM
+    dom.name && (dom.name.textContent = companyName);
     dom.employees && (dom.employees.textContent = employees || '10+');
     dom.location && (dom.location.textContent = location || 'Paris, France');
 

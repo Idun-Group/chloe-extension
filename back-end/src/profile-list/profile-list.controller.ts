@@ -51,11 +51,12 @@ export class ProfileListController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Get('bytype')
+    @Get()
     async getProfileListsByType(
         @Req() req: Request & { user: { id: string; email: string } },
         @Query('type') type: ListType,
     ): Promise<ProfileList[]> {
+        console.log('Fetching profile lists of type:', type);
         try {
             const userId = req.user.id;
             const lists = await this.profileListService.getProfileListsByType(

@@ -322,11 +322,24 @@ export function displayAddToListModal(
                                             `,
                                         )
                                         .join(``)}
+
+                                    <p class="add-to-list__no-lists"> Créer une nouvelle liste </p>
+                                    <button id="create-list-button" class="add-to-list__create-list-button submit-button">Créer une liste</button>
                                 </ul>
                             `
                         }
                     </div>
                 `;
+
+                const createListButton =
+                    document.getElementById('create-list-button');
+
+                if (createListButton) {
+                    createListButton.addEventListener('click', () => {
+                        closeModal();
+                        displayCreateListModal();
+                    });
+                }
 
                 contentDiv
                     .querySelectorAll('.profile-list-item')

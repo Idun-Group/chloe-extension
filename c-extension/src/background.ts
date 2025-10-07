@@ -1,5 +1,6 @@
 import {
     checkAuth,
+    clearToken,
     getValidAccessToken,
     signinWithLinkedin,
 } from './background/auth';
@@ -49,9 +50,14 @@ chrome.tabs.onRemoved.addListener((tabId) => {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     (async () => {
         console.log(request.action);
-        if (request.action === 'login') {
+        if (request.action === 'LOGIN') {
             const loginResponse = await signinWithLinkedin();
             sendResponse({ token: loginResponse });
+        }
+
+        if (request.action === 'LOGOUT') {
+            await clearToken();
+            sendResponse({ status: 'logged_out' });
         }
 
         if (request.action === 'GET_TOKEN') {

@@ -1,8 +1,8 @@
 @use './abstract/variables';
+@use './abstract/font';
 @use './components/button.scss';
 
 @use './base/general.scss';
-
 @use './layouts/modal.scss';
 @use './pages/popup';
 @use './pages/options';

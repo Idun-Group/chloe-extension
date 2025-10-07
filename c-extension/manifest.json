@@ -35,8 +35,8 @@
     ],
     "web_accessible_resources": [
         {
-            "resources": ["public/assets/*"],
-            "matches": ["<all_urls>"]
+            "resources": ["public/assets/fonts/*.woff2","public/assets/images/*"],
+            "matches": ["https://*.linkedin.com/*"]
         }
     ],
     "action": {

@@ -10,15 +10,9 @@ chrome.runtime.sendMessage({ action: 'CHECK_AUTH' }, (response) => {
 });
 
 LoginButton?.addEventListener('click', () => {
-    chrome.runtime.sendMessage({ action: 'CHECK_AUTH' }, (response) => {
-        if (response.isAuthenticated) {
-            chrome.tabs.create({ url: 'https://linkedin.com/feed' });
-        } else {
-            chrome.runtime.sendMessage({ action: 'LOGIN' }, (response) => {
-                console.log('ouvre linkedin');
-                chrome.tabs.create({ url: 'https://linkedin.com/feed' });
-            });
-        }
+    chrome.runtime.sendMessage({ action: 'LOGIN' }, (response) => {
+        console.log('ouvre linkedin');
+        chrome.tabs.create({ url: 'https://linkedin.com/feed' });
     });
 });
 

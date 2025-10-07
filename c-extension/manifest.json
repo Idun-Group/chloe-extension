@@ -17,7 +17,7 @@
         "service_worker": "background.js"
     },
     "content_security_policy": {
-        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://www.linkedin.com https://api.linkedin.com http://localhost:8000 http://127.0.0.1:8000 https://localhost:8000 ws://localhost:8000"
+        "extension_pages": "script-src 'self'; object-src 'self'; connect-src 'self' https://*.linkedin.com https://*.run.app https://chloe-extension-102305464279.europe-west1.run.app http://localhost:* https://localhost:* ws://localhost:*;"
     },
     "content_scripts": [
         {
@@ -31,7 +31,9 @@
     "host_permissions": [
         "https://www.linkedin.com/*",
         "https://api.linkedin.com/*",
-        "http://localhost:8000/*"
+        "http://localhost:8000/*",
+        "http://127.0.0.1:8000/*",
+        "https://chloe-extension-102305464279.europe-west1.run.app/*"
     ],
     "web_accessible_resources": [
         {

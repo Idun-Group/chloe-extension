@@ -152,7 +152,7 @@ async function displayPeoplePage(container: HTMLElement) {
         <div class="chloe-extension__body__profile__introduce">
             <h2 id="profile-full-name" class="chloe-extension__body__profile__introduce__full-name"> Prénom Nom </h2>
             <p> <span id="profile-job"> Job name </span>  <span id="profile-companie"> Entreprise </span> </p>
-            <p> Séniorité : <span id="seniority"> + ans </span> | Location : <span id="profile-location"> Ville, Pays </span> </p>
+            <p> Séniorité : <span id="seniority-level">  </span> + | Location : <span id="profile-location"> Ville, Pays </span> </p>
         </div>
 
         <div class="chloe-extension__body__profile__contacts">
@@ -213,7 +213,34 @@ async function displayPeoplePage(container: HTMLElement) {
         </div>
     `;
 
-    const { fullName, job, userLocation } = await scrapeLinkedinUserProfile();
+    const { fullName, job, userLocation, experiences, totalExperience } =
+        await scrapeLinkedinUserProfile();
+
+    // Mettre à jour les informations dans l'interface maintenant que l'HTML existe
+    const seniorityElement = container.querySelector('#seniority-level');
+    if (seniorityElement) {
+        seniorityElement.textContent = totalExperience;
+        console.log('Séniorité mise à jour:', totalExperience);
+    } else {
+        console.error('Élément #seniority-level non trouvé !');
+    }
+
+    // Mettre à jour les autres informations
+    const fullNameElement = container.querySelector('#profile-full-name');
+    if (fullNameElement) {
+        fullNameElement.textContent = fullName;
+    }
+
+    const jobElement = container.querySelector('#profile-job');
+    if (jobElement) {
+        jobElement.textContent = job;
+    }
+
+    const locationElement = container.querySelector('#profile-location');
+    if (locationElement) {
+        locationElement.textContent = userLocation;
+    }
+
     container.querySelectorAll('.info-button').forEach((button) => {
         button.addEventListener('mouseover', () => {
             console.log('Info button hovered!');
@@ -499,8 +526,423 @@ const scrapeLinkedinUserProfile = async () => {
             console.log('Bloc activité non trouvé');
         }
     }, 2000);
-    return { fullName, job, userLocation: location };
+
+    // Scraper les expériences professionnelles
+    const { experiences, totalExperience } = await scrapeUserExperiences();
+    console.log("Durée totale d'expérience:", totalExperience);
+
+    // Ne pas mettre à jour l'interface ici - ce sera fait après l'insertion HTML
+
+    return {
+        fullName,
+        job,
+        userLocation: location,
+        experiences,
+        totalExperience,
+    };
 };
+
+// Fonction pour scraper les expériences professionnelles
+async function scrapeUserExperiences(): Promise<{
+    experiences: Array<{
+        position: string;
+        company: string;
+        duration: string;
+        startDate: string;
+        endDate: string;
+        location: string;
+        description: string;
+    }>;
+    totalExperience: string;
+}> {
+    const experiences: Array<{
+        position: string;
+        company: string;
+        duration: string;
+        startDate: string;
+        endDate: string;
+        location: string;
+        description: string;
+    }> = [];
+
+    try {
+        console.log('Début du scraping des expériences...');
+
+        // Attendre que la section expérience soit disponible avec waitFor
+        const experienceSection = await waitFor<HTMLElement>(
+            '.pv-profile-card',
+            5000,
+        );
+
+        if (!experienceSection) {
+            console.log(
+                'Aucune section .pv-profile-card trouvée après attente',
+            );
+            return { experiences, totalExperience: '0 mois' };
+        }
+
+        // Trouver la section Expérience par la classe et le texte
+        const allSections = Array.from(
+            document.querySelectorAll('.pv-profile-card'),
+        );
+
+        const targetSection = allSections.find((section) => {
+            const heading = section.querySelector('h2, h3');
+            const headingText = heading?.textContent?.trim();
+            console.log('Texte du heading trouvé:', headingText);
+            return headingText && headingText.startsWith('Expérience');
+        });
+
+        if (!targetSection) {
+            console.log('Section Expérience non trouvée');
+            return { experiences, totalExperience: '0 mois' };
+        }
+
+        console.log('Section Expérience trouvée:', targetSection);
+
+        // Trouver l'ul dans la section expérience
+        const experienceUl = targetSection.querySelector('ul');
+        if (!experienceUl) {
+            console.log('Aucun ul trouvé dans la section Expérience');
+            return { experiences, totalExperience: '0 mois' };
+        }
+
+        console.log('UL des expériences trouvé:', experienceUl);
+
+        // Récupérer tous les li de cet ul
+        const experienceItems = experienceUl.querySelectorAll('li');
+
+        console.log(
+            "Nombre d'items d'expérience trouvés:",
+            experienceItems.length,
+        );
+
+        experienceItems.forEach((item, index) => {
+            try {
+                console.log(
+                    `\n--- Traitement de l'expérience ${index + 1} ---`,
+                );
+
+                // Extraire les informations de chaque expérience
+                const positionElement = item.querySelector(
+                    'h3, .t-16.t-black.t-bold, .pv-entity__summary-info h3',
+                );
+                const companyElement = item.querySelector(
+                    '.t-14.t-black--light .pv-entity__secondary-title, .t-14.t-black--light, .pv-entity__secondary-title',
+                );
+
+                // Cibler spécifiquement le span avec la classe pvs-entity__caption-wrapper
+                const captionWrapper = item.querySelector(
+                    '.pvs-entity__caption-wrapper',
+                );
+                let duration = '';
+                let startDate = '';
+                let endDate = '';
+
+                if (captionWrapper) {
+                    const fullText = captionWrapper.textContent?.trim() || '';
+                    console.log('Texte complet du caption-wrapper:', fullText);
+
+                    // Récupérer la partie avant le "·" (période)
+                    const parts = fullText.split('·');
+                    if (parts.length > 0) {
+                        const periodText = parts[0].trim(); // "sept. 2023 - aujourd'hui"
+                        console.log('Période extraite:', periodText);
+
+                        // Parser la période pour extraire dates de début et fin
+                        const { start, end } = parsePeriod(periodText);
+                        startDate = start;
+                        endDate = end;
+                        console.log('Dates parsées:', { startDate, endDate });
+                    }
+
+                    // Récupérer la partie après le "·" (durée)
+                    if (parts.length > 1) {
+                        duration = parts[1].trim(); // "2&nbsp;ans 2 mois"
+                        console.log('Durée extraite:', duration);
+                    }
+                } else {
+                    console.log(
+                        'Caption-wrapper non trouvé pour cette expérience',
+                    );
+                }
+
+                const locationElement = item.querySelector(
+                    '.t-12.t-black--light.pb1 .pv-entity__location span:last-child, .pv-entity__location span:last-child',
+                );
+                const descriptionElement = item.querySelector(
+                    '.pv-entity__description, .pvs-list__outer-container .t-14',
+                );
+
+                const position = positionElement?.textContent?.trim() || '';
+                const company = companyElement?.textContent?.trim() || '';
+                // On utilise la variable duration déjà extraite du caption-wrapper
+                const location = locationElement?.textContent?.trim() || '';
+                const description =
+                    descriptionElement?.textContent?.trim() || '';
+
+                console.log('Données extraites:', {
+                    position,
+                    company,
+                    duration,
+                    startDate,
+                    endDate,
+                    location,
+                    description,
+                });
+
+                if (position || company) {
+                    experiences.push({
+                        position,
+                        company,
+                        duration,
+                        startDate,
+                        endDate,
+                        location,
+                        description,
+                    });
+                    console.log(`Expérience ${index + 1} ajoutée:`, {
+                        position,
+                        company,
+                        duration,
+                        location,
+                    });
+                }
+            } catch (error) {
+                console.error(
+                    `Erreur lors du parsing de l'expérience ${index + 1}:`,
+                    error,
+                );
+            }
+        });
+    } catch (error) {
+        console.error('Erreur lors du scraping des expériences:', error);
+    }
+
+    // Calculer la durée totale d'expérience
+    console.log(`Nombre d'expériences trouvées: ${experiences.length}`);
+    experiences.forEach((exp, i) => {
+        console.log(
+            `Exp ${i + 1}: Position: "${exp.position}", Durée: "${
+                exp.duration
+            }"`,
+        );
+    });
+
+    const totalExperience = calculateTotalExperience(experiences);
+    console.log("Durée totale d'expérience calculée:", totalExperience);
+
+    return { experiences, totalExperience };
+}
+
+// Fonction pour parser une période comme "sept. 2023 - aujourd'hui"
+function parsePeriod(periodText: string): { start: string; end: string } {
+    const cleaned = periodText.replace(/&nbsp;/g, ' ').trim();
+    const parts = cleaned.split(' - ');
+
+    if (parts.length >= 2) {
+        return {
+            start: parts[0].trim(),
+            end: parts[1].trim(),
+        };
+    }
+
+    // Si pas de séparateur, considérer comme une seule date
+    return {
+        start: cleaned,
+        end: cleaned,
+    };
+}
+
+// Fonction pour convertir une date LinkedIn en objet Date
+function parseLinkedInDate(dateStr: string): Date | null {
+    if (!dateStr) return null;
+
+    const today = new Date();
+
+    // Cas spéciaux
+    if (
+        dateStr.toLowerCase().includes("aujourd'hui") ||
+        dateStr.toLowerCase().includes('présent')
+    ) {
+        return today;
+    }
+
+    // Mapping des mois français
+    const monthMap: { [key: string]: number } = {
+        janv: 0,
+        janvier: 0,
+        févr: 1,
+        février: 1,
+        mars: 2,
+        avr: 3,
+        avril: 3,
+        mai: 4,
+        juin: 5,
+        juil: 6,
+        juillet: 6,
+        août: 7,
+        sept: 8,
+        septembre: 8,
+        oct: 9,
+        octobre: 9,
+        nov: 10,
+        novembre: 10,
+        déc: 11,
+        décembre: 11,
+    };
+
+    // Regex pour capturer mois et année
+    const match = dateStr.match(/(\w+)\.?\s*(\d{4})/);
+    if (match) {
+        const monthStr = match[1].toLowerCase();
+        const year = parseInt(match[2]);
+        const month = monthMap[monthStr];
+
+        if (month !== undefined) {
+            return new Date(year, month, 1);
+        }
+    }
+
+    return null;
+}
+
+// Fonction pour calculer la durée réelle sans chevauchement
+function calculateNonOverlappingExperience(
+    experiences: Array<{ startDate: string; endDate: string }>,
+): number {
+    const periods: Array<{ start: Date; end: Date }> = [];
+
+    // Convertir toutes les dates
+    for (const exp of experiences) {
+        const start = parseLinkedInDate(exp.startDate);
+        const end = parseLinkedInDate(exp.endDate);
+
+        if (start && end) {
+            periods.push({ start, end });
+        }
+    }
+
+    if (periods.length === 0) return 0;
+
+    // Trier par date de début
+    periods.sort((a, b) => a.start.getTime() - b.start.getTime());
+
+    // Fusionner les périodes qui se chevauchent
+    const merged: Array<{ start: Date; end: Date }> = [periods[0]];
+
+    for (let i = 1; i < periods.length; i++) {
+        const current = periods[i];
+        const lastMerged = merged[merged.length - 1];
+
+        // Si la période actuelle commence avant la fin de la dernière fusionnée
+        if (current.start <= lastMerged.end) {
+            // Fusionner en prenant la fin la plus tardive
+            lastMerged.end = new Date(
+                Math.max(lastMerged.end.getTime(), current.end.getTime()),
+            );
+        } else {
+            // Pas de chevauchement, ajouter la nouvelle période
+            merged.push(current);
+        }
+    }
+
+    // Calculer la durée totale en mois
+    let totalMonths = 0;
+    for (const period of merged) {
+        const diffTime = period.end.getTime() - period.start.getTime();
+        const diffMonths = diffTime / (1000 * 60 * 60 * 24 * 30.44); // Moyenne de jours par mois
+        totalMonths += Math.round(diffMonths);
+    }
+
+    console.log('Périodes fusionnées:', merged);
+    console.log('Durée totale sans chevauchement:', totalMonths, 'mois');
+
+    return totalMonths;
+}
+
+// Fonction pour parser une durée et la convertir en mois
+function parseDurationToMonths(durationText: string): number {
+    let totalMonths = 0;
+
+    // Nettoyer le texte (enlever &nbsp; et espaces multiples)
+    const cleanText = durationText
+        .replace(/&nbsp;/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    console.log('Durée nettoyée:', cleanText);
+
+    // Regex pour extraire les années et mois
+    const yearMatch = cleanText.match(/(\d+)\s*ans?/i);
+    const monthMatch = cleanText.match(/(\d+)\s*mois/i);
+
+    if (yearMatch) {
+        const years = parseInt(yearMatch[1]);
+        totalMonths += years * 12;
+        console.log(`${years} année(s) = ${years * 12} mois`);
+    }
+
+    if (monthMatch) {
+        const months = parseInt(monthMatch[1]);
+        totalMonths += months;
+        console.log(`${months} mois supplémentaire(s)`);
+    }
+
+    console.log(`Total pour "${cleanText}": ${totalMonths} mois`);
+    return totalMonths;
+}
+
+// Fonction pour convertir les mois en format "X ans Y mois"
+function formatDuration(totalMonths: number): string {
+    const years = Math.floor(totalMonths / 12);
+    const months = totalMonths % 12;
+
+    if (years === 0) {
+        return `${months} mois`;
+    } else if (months === 0) {
+        return `${years} an${years > 1 ? 's' : ''}`;
+    } else {
+        return `${years} an${years > 1 ? 's' : ''} et ${months} mois`;
+    }
+}
+
+// Fonction pour calculer la durée totale d'expérience
+function calculateTotalExperience(
+    experiences: Array<{
+        duration: string;
+        startDate: string;
+        endDate: string;
+    }>,
+): string {
+    console.log("\n--- Calcul de la durée totale d'expérience ---");
+
+    // Méthode 1: Calculer sans chevauchement en utilisant les dates
+    console.log('=== Méthode 1: Calcul sans chevauchement ===');
+    const nonOverlappingMonths = calculateNonOverlappingExperience(experiences);
+    const smartDuration = formatDuration(nonOverlappingMonths);
+
+    // Méthode 2: Simple addition des durées (pour comparaison)
+    console.log('\n=== Méthode 2: Simple addition ===');
+    let totalMonths = 0;
+    experiences.forEach((exp, index) => {
+        if (exp.duration) {
+            console.log(`Expérience ${index + 1}: "${exp.duration}"`);
+            const months = parseDurationToMonths(exp.duration);
+            totalMonths += months;
+        }
+    });
+
+    const simpleDuration = formatDuration(totalMonths);
+
+    console.log(`\n--- Résultats ---`);
+    console.log(`Simple addition: ${simpleDuration} (${totalMonths} mois)`);
+    console.log(
+        `Sans chevauchement: ${smartDuration} (${nonOverlappingMonths} mois)`,
+    );
+
+    // Retourner la durée calculée sans chevauchement
+    return smartDuration;
+}
 
 interface CompanyTopCard {
     sector: string | null;

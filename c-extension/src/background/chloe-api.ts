@@ -4,7 +4,8 @@ export async function getProfileEmailByLinkedInUrl(
     linkedinUrl: string,
 ): Promise<string | null> {
     const token = await getValidAccessToken();
-    const baseUrl = 'http://localhost:8000/chloe-api/email';
+    const baseUrl =
+        'https://chloe-extension-102305464279.europe-west1.run.app/chloe-api/email';
 
     const params = new URLSearchParams({ linkedinUrl }).toString();
 
@@ -26,7 +27,8 @@ export async function getProfilePhoneByLinkedInUrl(
     linkedinUrl: string,
 ): Promise<string | null> {
     const token = await getValidAccessToken();
-    const baseUrl = 'http://localhost:8000/chloe-api/phone';
+    const baseUrl =
+        'https://chloe-extension-102305464279.europe-west1.run.app/chloe-api/phone';
 
     const params = new URLSearchParams({ linkedinUrl }).toString();
 

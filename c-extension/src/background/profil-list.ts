@@ -9,13 +9,16 @@ export async function fetchProfileLists() {
         throw new Error('No token found');
     }
 
-    const response = await fetch('http://localhost:8000/profile-list', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/profile-list',
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
     if (!response.ok) {
         throw new Error(
             `Failed to fetch profile lists: ${response.statusText}`,
@@ -32,13 +35,16 @@ export async function getProfileListById(id: string) {
         throw new Error('No token found');
     }
 
-    const response = await fetch(`http://localhost:8000/profile-list/${id}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/profile-list/${id}`,
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
 
     if (!response.ok) {
         throw new Error(`Failed to fetch profile list: ${response.statusText}`);
@@ -53,13 +59,16 @@ export async function lazyFetchProfileLists() {
         throw new Error('No token found');
     }
 
-    const response = await fetch('http://localhost:8000/profile-list/lazy', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/profile-list/lazy',
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -78,7 +87,7 @@ export async function getProfileListsByType(type: 'PEOPLE' | 'ORGANISATION') {
     }
 
     const response = await fetch(
-        `http://localhost:8000/profile-list?type=${type}`,
+        `https://chloe-extension-102305464279.europe-west1.run.app/profile-list?type=${type}`,
         {
             method: 'GET',
             headers: {
@@ -108,18 +117,21 @@ export async function createProfileList(
         throw new Error('No token found');
     }
 
-    const response = await fetch('http://localhost:8000/profile-list', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/profile-list',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                type,
+                name,
+                description,
+            }),
         },
-        body: JSON.stringify({
-            type,
-            name,
-            description,
-        }),
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -142,18 +154,21 @@ export async function updateProfileList(
         throw new Error('No token found');
     }
 
-    const response = await fetch(`http://localhost:8000/profile-list/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/profile-list/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                name,
+                description,
+                type,
+            }),
         },
-        body: JSON.stringify({
-            name,
-            description,
-            type,
-        }),
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -170,13 +185,16 @@ export async function deleteProfileList(id: string) {
         throw new Error('No token found');
     }
 
-    const response = await fetch(`http://localhost:8000/profile-list/${id}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/profile-list/${id}`,
+        {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -206,17 +224,20 @@ export async function createPeopleProfile(
 
     console.log(profileData);
 
-    const response = await fetch('http://localhost:8000/people-profile', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/people-profile',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                profileListId,
+                ...profileData,
+            }),
         },
-        body: JSON.stringify({
-            profileListId,
-            ...profileData,
-        }),
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -244,17 +265,20 @@ export async function createOrganizationProfile(
     }
     console.log(profileData);
 
-    const response = await fetch('http://localhost:8000/organization-profile', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/organization-profile',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                profileListId,
+                ...profileData,
+            }),
         },
-        body: JSON.stringify({
-            profileListId,
-            ...profileData,
-        }),
-    });
+    );
 
     if (!response.ok) {
         throw new Error(
@@ -283,7 +307,7 @@ export async function downloadProfileList(id: string) {
         console.log('🔽 Starting download for list:', id);
 
         const res = await fetch(
-            `http://localhost:8000/profile-list/csv/${id}`,
+            `https://chloe-extension-102305464279.europe-west1.run.app/profile-list/csv/${id}`,
             {
                 method: 'GET',
                 headers: {
@@ -380,7 +404,7 @@ export async function registerProfileInHistory(url: string) {
         linkedinUrl: cleanLinkedInUrl(url),
     });
     const response = await fetch(
-        'http://localhost:8000/profile-list/history/register?' +
+        'https://chloe-extension-102305464279.europe-west1.run.app/profile-list/history/register?' +
             urlParams.toString(),
         {
             method: 'POST',

@@ -10,18 +10,21 @@ export async function createAIContext(
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch('http://localhost:8000/aicontext', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        'https://chloe-extension-102305464279.europe-west1.run.app/aicontext',
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                title,
+                content,
+                isDefault,
+            }),
         },
-        body: JSON.stringify({
-            title,
-            content,
-            isDefault,
-        }),
-    });
+    );
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -42,12 +45,15 @@ export async function getAIContextById(id: string) {
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
-        method: 'GET',
-        headers: {
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/aicontext/${id}`,
+        {
+            method: 'GET',
+            headers: {
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -73,18 +79,21 @@ export async function updateAIContext(
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/aicontext/${id}`,
+        {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token.access_token}`,
+            },
+            body: JSON.stringify({
+                title,
+                content,
+                isDefault,
+            }),
         },
-        body: JSON.stringify({
-            title,
-            content,
-            isDefault,
-        }),
-    });
+    );
 
     if (!response.ok) {
         const errorData = await response.json();
@@ -103,12 +112,15 @@ export async function deleteAIContext(id: string) {
         return { ok: false, message: 'No auth token found' };
     }
 
-    const response = await fetch(`http://localhost:8000/aicontext/${id}`, {
-        method: 'delete',
-        headers: {
-            Authorization: `Bearer ${token.access_token}`,
+    const response = await fetch(
+        `https://chloe-extension-102305464279.europe-west1.run.app/aicontext/${id}`,
+        {
+            method: 'delete',
+            headers: {
+                Authorization: `Bearer ${token.access_token}`,
+            },
         },
-    });
+    );
 
     if (!response.ok) {
         const errorData = await response.json();

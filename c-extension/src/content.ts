@@ -97,6 +97,12 @@ function showGlobalErrorToast(message: string, duration = 4000) {
         return;
     }
 
+    // Supprimer tous les toasts existants pour n'en afficher qu'un seul à la fois
+    const existingToasts = globalToastContainer.querySelectorAll('.toast');
+    existingToasts.forEach((existingToast) => {
+        existingToast.remove();
+    });
+
     const toast = document.createElement('div');
     toast.className = 'toast error';
     toast.style.cssText = `
@@ -419,13 +425,14 @@ function renderFor(url: string) {
     const isProfile = url.includes('/in/');
     const isOrg = url.includes('/company/') || url.includes('/school/');
 
-    // L'extension reste toujours rétractée par défaut, peu importe la page
-    shell.classList.add('retracted');
-
     if (isProfile || isOrg) {
-        // Sur les pages valides, préparer le contenu approprié mais garder l'extension fermée
+        // Sur les pages valides, ouvrir l'extension automatiquement et préparer le contenu
+        shell.classList.remove('retracted');
         displayProfilePage(bodyEl, isProfile ? 'people' : 'organization');
+        adjustContainerPosition();
     } else {
+        // Sur les pages non valides, fermer l'extension et préparer le message d'erreur
+        shell.classList.add('retracted');
         // Sur les pages non valides, préparer le message d'erreur
         bodyEl.innerHTML = `
             <div class="error-message">
@@ -459,3 +466,34 @@ const observer = new MutationObserver((_m, obs) => {
 });
 
 observer.observe(document.body, { childList: true, subtree: true });
+
+// Variable pour suivre l'URL courante
+let currentUrl = location.href;
+
+// Fonction pour détecter les changements d'URL dans une SPA
+function detectUrlChange() {
+    if (currentUrl !== location.href) {
+        currentUrl = location.href;
+        console.log('URL changed to:', currentUrl);
+        renderFor(currentUrl);
+    }
+}
+
+// Détecter les changements d'URL via plusieurs méthodes pour couvrir tous les cas SPA
+setInterval(detectUrlChange, 1000); // Vérification toutes les secondes
+
+// Écouter les événements de navigation
+window.addEventListener('popstate', detectUrlChange);
+
+// Observer pour détecter les changements dans le DOM qui pourraient indiquer une navigation
+const urlObserver = new MutationObserver(() => {
+    detectUrlChange();
+});
+
+// Commencer à observer les changements dans le DOM pour détecter la navigation
+urlObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    attributes: true,
+    attributeFilter: ['class'],
+});
